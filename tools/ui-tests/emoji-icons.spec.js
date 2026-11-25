@@ -17,3 +17,27 @@ test('rich() swaps a lone mapped emoji and leaves emoji sequences as typed', asy
   expect(out.sun).toEqual({ icons: 1, text: '' }); // the emoji form is still an icon
   expect(out.unknown).toEqual({ icons: 0, text: '\u{1F984} x' });
 });
+
+test('settings show outline icons for Moby widgets and saved page icons', async ({ page }) => {
+  await page.goto('/settings/');
+  const capture = page.locator('.pal').filter({ hasText: 'Call capture' });
+  await expect(capture.locator('svg[data-icon="video"] path').first()).toBeVisible();
+  const field = page.locator('#peHead .icon-input');
+  await field.fill('🎥');
+  await field.blur();
+  await expect(page.locator('#peHead .icon-field svg[data-icon="video"]')).toBeVisible();
+  await expect(page.locator('.ptab.on svg[data-icon="video"]')).toBeVisible();
+  await expect(field).toHaveValue('🎥');
+});
+
+test('shortcut preset options have contrasting colors and deletion is red', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/settings/#shortcuts');
+  const preset = page.locator('#editor select').filter({ has: page.locator('option', { hasText: 'Windows Terminal' }) });
+  const terminal = preset.locator('option', { hasText: 'Windows Terminal' });
+  await expect(terminal).toHaveCSS('background-color', 'rgb(32, 32, 32)');
+  await expect(terminal).toHaveCSS('color', 'rgb(244, 244, 244)');
+  await preset.selectOption({ label: 'Windows Terminal' });
+  await expect(page.locator('#editor input.technical-input').first()).toHaveValue('wt.exe');
+  await expect(page.locator('#editor').getByRole('button', { name: 'Delete', exact: true })).toHaveCSS('background-color', 'rgb(73, 37, 37)');
+});

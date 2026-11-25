@@ -19,7 +19,8 @@
   --bg: #080808; --panel: #ffffff0b; --panel-2: #ffffff12; --line: #ffffff24;
   --text: #f4f4f4; --muted: #b4b4b4;
   --accent: #fff; --accent-ink: #111; --selected: #ffffff19; --selected-line: #777;
-  --danger: #fff; --ok: #eaeaea; --warn: #d1d1d1;
+  --danger: #ffada8; --danger-bg: #492525; --danger-line: #9e4e4b; --danger-hover: #662d2c;
+  --ok: #eaeaea; --warn: #d1d1d1;
   --shadow: none;
   --display-font: "Midnight Letters", "Segoe UI", system-ui, sans-serif;
   scrollbar-color: #5a5a5a var(--bg);
@@ -46,7 +47,6 @@ header .ver { color: var(--muted); font-size: 12px; }
 .btn:hover { border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
 .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; font-weight: 600; }
 .btn.primary:disabled { opacity: .45; cursor: default; }
-.btn.danger { color: var(--danger); }
 .btn.sm { padding: 4px 9px; font-size: 12.5px; border-radius: 7px; }
 .icon-btn { border: 1px solid var(--line); background: var(--panel); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: grid; place-items: center; }
 .ico { width: 1em; height: 1em; vertical-align: -0.15em; flex: none; }
@@ -75,6 +75,8 @@ input:is(:not([type]), [type=text], [type=number], [type=time], [type=url], [typ
   background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; outline: none; min-width: 0;
 }
 input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+select option, select optgroup { background-color: #202020; color: #f4f4f4; }
+select option:disabled { color: #a0a0a0; }
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
 .check { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; margin-inline-end: 14px; }
 .check input { accent-color: var(--accent); width: 16px; height: 16px; }
@@ -217,6 +219,10 @@ table.items td.val { font-family: Consolas, monospace; font-size: 12px; max-widt
 .emojis button:hover { background: var(--panel-2); }
 input[type=color] { width: 42px; height: 34px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); padding: 2px; }
 .icon-input { width: 70px; text-align: center; font-size: 20px; }
+.icon-field { display: inline-grid; place-items: center; position: relative; max-width: 100%; }
+.icon-field .ico { position: absolute; width: 20px; height: 20px; pointer-events: none; }
+.icon-field.has-outline .icon-input:not(:focus) { color: transparent; text-indent: -9999px; }
+.icon-field:focus-within .ico { visibility: hidden; }
 .custom-icon-preview { width: 30px; height: 30px; object-fit: contain; border-radius: 6px; background: var(--panel-2); }
 
 /* smart stack builder in inspector */
@@ -270,7 +276,6 @@ input[type=color] { width: 42px; height: 34px; border: 1px solid var(--line); bo
 }
 .stack-btn-sm:hover:not(:disabled) { background: var(--line); color: var(--text); }
 .stack-btn-sm:disabled { opacity: 0.3; cursor: default; }
-.stack-btn-del:hover { background: var(--selected); color: var(--text); }
 .stack-sub-config {
   margin: -6px 0 4px;
   padding: 10px 12px;
@@ -467,11 +472,12 @@ nav a.on::before { color: var(--accent); }
 .lead.long:hover { color: var(--text); }
 
 /* page toolbar: the one useful state (home page) stays outlined, the housekeeping buttons go quiet until hovered */
-#peHead .card > .row + .row .btn.sm { border-color: transparent; background: transparent; color: var(--muted); }
-#peHead .card > .row + .row .btn.sm:hover:not(:disabled) { color: var(--text); background: var(--panel-2); border-color: var(--line); }
-#peHead .card > .row + .row .btn.sm.danger { color: var(--danger); }
-#peHead .card > .row + .row .btn.sm.danger:hover:not(:disabled) { background: color-mix(in srgb, var(--danger) 10%, transparent); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+#peHead .card > .row + .row .btn.sm:not(.danger) { border-color: transparent; background: transparent; color: var(--muted); }
+#peHead .card > .row + .row .btn.sm:not(.danger):hover:not(:disabled) { color: var(--text); background: var(--panel-2); border-color: var(--line); }
 #peHead .card > .row + .row .btn.sm:has(.ico.m) { border-color: var(--line); color: var(--text); }
+.btn.danger, .stack-btn-del { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger-line); }
+.btn.danger:hover:not(:disabled), .stack-btn-del:hover:not(:disabled) { background: var(--danger-hover); border-color: var(--danger); }
+.btn.danger:disabled { opacity: .45; }
 
 @media (pointer: coarse) {
   .btn { min-height: 44px; } .btn.sm { min-height: 40px; } .icon-btn { width: 44px; height: 44px; }
@@ -768,7 +774,7 @@ nav a.on::before { color: var(--accent); }
             <img id="wallpaperPreview" alt="" style="width:96px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--line);display:none">
             <input type="file" id="wallpaperFile" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" style="display:none">
             <button class="btn sm" type="button" id="wallpaperUpload" data-i18n="s.display.wallpaperUpload">Choose a picture…</button>
-            <button class="btn sm" type="button" id="wallpaperRemove" data-i18n="s.k.remove" style="display:none">Remove</button>
+            <button class="btn sm danger" type="button" id="wallpaperRemove" data-i18n="s.k.remove" style="display:none">Remove</button>
             <div class="field" style="margin:0;width:110px"><label data-i18n="s.display.wallpaperDim">Darken (%)</label><input type="number" min="0" max="90" data-bind="display.wallpaper.dim" data-type="int"></div>
             <div class="field" style="margin:0;width:110px"><label data-i18n="s.display.wallpaperBlur">Blur (px)</label><input type="number" min="0" max="20" data-bind="display.wallpaper.blur" data-type="int"></div>
           </div>
@@ -1054,6 +1060,12 @@ const ICONS = {
   x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
   plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
   play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+  pause: '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+  power: '<path d="M12 2v10M6.34 6.34a8 8 0 1 0 11.32 0"/>',
+  hourglass: '<path d="M6 3h12M6 21h12M7 3v4c0 2.3 2.2 3.7 5 5-2.8 1.3-5 2.7-5 5v4m10-18v4c0 2.3-2.2 3.7-5 5 2.8 1.3 5 2.7 5 5v4"/>',
+  mic: '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1m-7 8v4m-4 0h8"/>',
+  monitor: '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M12 17v4m-4 0h8"/>',
+  users: '<circle cx="9" cy="7" r="3"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2m1-17a3 3 0 0 1 0 6m5 11v-2a4 4 0 0 0-3-3.9"/>',
   'alarm-clock': '<path d="M4 13a8 8 0 1 0 16 0a8 8 0 1 0 -16 0"/><path d="M12 9v4l2 2"/><path d="M5 3 2 6"/><path d="m22 6-3-3"/><path d="M6.38 18.7 4 21"/><path d="M17.64 18.67 20 21"/>',
   'app-window': '<path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2z"/><path d="M10 4v4"/><path d="M2 8h20"/><path d="M6 4v4"/>',
   'arrow-left-right': '<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
@@ -1189,6 +1201,7 @@ const icon = (name, cls = '') => {
 /* Emoji → Lucide icon, as in the phone panel: stored emoji (shortcut and page icons, widget catalog, rule and preset
    labels) stay plain text in the config, and every place that shows one draws the matching icon instead. */
 const EMOJI_ICON = { '🏠': 'house', '☀': 'sun', '🌙': 'moon', '🌤': 'cloud-sun', '⛅': 'cloud-sun', '☁': 'cloudy', '🌫': 'cloud-fog', '🌦': 'cloud-sun-rain', '🌧': 'cloud-rain', '🌨': 'cloud-snow', '❄': 'snowflake', '⛈': 'cloud-lightning', '🌡': 'thermometer', '📱': 'smartphone', '⚡': 'zap', '📹': 'video', '🎙': 'mic', '📶': 'signal', '🎛': 'sliders-horizontal', '💬': 'message-square', '🔋': 'battery', '⏭': 'skip-forward', '⏮': 'skip-back', '⏯': 'play', '🔤': 'type', '🕒': 'clock', '🎵': 'music', '📈': 'trending-up', '⏲': 'timer', '⏱': 'timer', '📊': 'chart-column', '💾': 'hard-drive', '🎮': 'gamepad-2', '✳': 'asterisk', '🤖': 'bot', '🐙': 'github', '⚙': 'settings', '🔘': 'circle-dot', '🌍': 'globe', '🌐': 'globe', '📅': 'calendar', '🍅': 'timer', '⏳': 'hourglass', '📝': 'notebook-pen', '💻': 'laptop', '📡': 'radio-tower', '📬': 'mailbox', '🕰': 'alarm-clock', '📆': 'calendar-days', '🔢': 'hash', '🫁': 'wind', '✅': 'circle-check', '🔥': 'flame', '🎯': 'target', '🔊': 'volume-2', '🌅': 'sunrise', '🍃': 'leaf', '📰': 'newspaper', '🗞': 'newspaper', '🖼': 'image', '💱': 'arrow-left-right', '🪙': 'coins', '🖥': 'monitor', '🎧': 'headphones', '🖱': 'mouse', '⌨': 'keyboard', '🖊': 'pen', '🔇': 'volume-x', '🔕': 'bell-off', '📞': 'phone', '💡': 'lightbulb', '🔌': 'plug', '🌀': 'fan', '🪟': 'app-window', '📜': 'scroll-text', '🎬': 'clapperboard', '🧑': 'user', '🧹': 'brush', '📷': 'camera', '💧': 'droplet', '🚪': 'door-open', '🏃': 'footprints', '🧍': 'person-standing', '🫧': 'cloudy', '🔒': 'lock', '📳': 'vibrate', '🔓': 'lock-open', '⚠': 'warn', '🔴': 'radio', '🕙': 'clock-10', '👀': 'eye', '❌': 'circle-x', '⏸': 'pause', '🔔': 'bell', '📧': 'mail', '🧮': 'calculator', '✂': 'scissors', '🚀': 'rocket', '🐳': 'container', '🧪': 'flask-conical', '🛠': 'wrench', '📦': 'package', '⭐': 'star', '🦊': 'cat', '📁': 'folder', '📺': 'tv', '🚿': 'shower-head', '🛋': 'sofa', '🛏': 'bed', '🍳': 'egg-fried', '☕': 'coffee', '🌱': 'sprout', '🪴': 'flower-2', '🚗': 'car', '🧺': 'washing-machine', '🖨': 'printer', '📻': 'radio', '➕': 'plus', '⬆': 'arrow-up', '◻': 'square', '👋': 'hand', '🧭': 'compass', '🗓': 'calendar-range', '🏖': 'umbrella', '🧩': 'puzzle', '🗂': 'folders', '🎚': 'sliders-vertical', '🔉': 'volume-1', '⏩': 'fast-forward', '🔀': 'shuffle', '📂': 'folder-open', '📽': 'projector', '🎶': 'music-2', '🎹': 'piano', '🎨': 'palette', '🗑': 'trash-2' };
+Object.assign(EMOJI_ICON, { '🎥': 'video', '🎤': 'mic', '↔': 'arrow-left-right', '⏻': 'power', '▶': 'play', '👥': 'users' });
 const EMOJI_RE = new RegExp('(?<!\\u200D)(' + Object.keys(EMOJI_ICON).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\uFE0F?(?![\\u{1F3FB}-\\u{1F3FF}\\u200D\\p{M}])', 'gu');
 const emo = (e, cls = '') => { const n = EMOJI_ICON[String(e == null ? '' : e).replace(/\uFE0F/g, '').trim()]; return n ? icon(n, cls) : document.createTextNode(e == null ? '' : String(e)); };
 // A text with its known emoji swapped for inline icons (a DocumentFragment).
@@ -1206,6 +1219,20 @@ const rich = (text) => {
 };
 // The same text without those emoji, for places that cannot hold an icon (<option>, title tooltips).
 const plain = (text) => String(text == null ? '' : text).replace(EMOJI_RE, '').replace(/\s+/g, ' ').trim();
+
+function iconField(input) {
+  const field = h('span', { class: 'icon-field' }, input);
+  const render = () => {
+    field.querySelector('.ico')?.remove();
+    const preview = emo(input.value);
+    const outlined = preview.nodeType === Node.ELEMENT_NODE;
+    field.classList.toggle('has-outline', outlined);
+    if (outlined) field.append(preview);
+  };
+  input.addEventListener('input', render);
+  render();
+  return field;
+}
 
 const COLORS = ['#ef4444', '#f97316', '#f59e0b', '#e5b84b', '#84cc16', '#22c55e', '#14b8a6', '#0ea5e9', '#2f80ed', '#6366f1', '#a855f7', '#ec4899', '#d97757', '#64748b', '#9ca3af'];
 const EMOJIS = ['⌨️', '💻', '📁', '📝', '🌐', '🎧', '🎵', '💬', '📧', '📅', '🧮', '⚙️', '✂️', '📊', '🔇', '🔊', '🌙', '🔒', '🚀', '🐙', '🐳', '🧪', '🛠️', '📦', '🎮', '📷', '🎙️', '⭐', '✳️', '🦊'];
@@ -1455,7 +1482,7 @@ function renderPageEditor() {
   $('peHead').replaceChildren(
     h('div', { class: 'card' },
       h('div', { class: 'row', style: { gap: '10px' } },
-        h('input', { type: 'text', class: 'icon-input', value: p.icon || '', maxlength: 8, title: 'Icon', 'aria-label': 'Icon', oninput: (e) => { p.icon = e.target.value; changed(); renderTabsOnly(); } }),
+        iconField(h('input', { type: 'text', class: 'icon-input', value: p.icon || '', maxlength: 8, title: 'Icon', 'aria-label': 'Icon', oninput: (e) => { p.icon = e.target.value; changed(); renderTabsOnly(); } })),
         h('input', { type: 'text', value: p.title || '', placeholder: t('s.js.pageName'), 'aria-label': t('s.js.pageName'), style: { flex: '1', fontSize: '16px', fontWeight: '600' }, oninput: (e) => { p.title = e.target.value; changed(); renderTabsOnly(); } }),
         h('label', { class: 'check', title: t('s.js.showOnPhone') }, h('label', { class: 'switch' },
           h('input', { type: 'checkbox', checked: p.enabled !== false, onchange: (e) => {
@@ -1468,7 +1495,7 @@ function renderPageEditor() {
         h('button', { class: 'btn sm', onclick: () => openTemplates(selPage) }, t('s.js.replaceTpl')),
         h('button', { class: 'btn sm', onclick: () => { const c = JSON.parse(JSON.stringify(p)); c.id = ''; c.title += t('s.js.dupPageSuffix'); cfg.pages.splice(selPage + 1, 0, c); selPage++; renderPages(); changed(); } }, t('s.js.dupPage')),
         h('button', { class: 'btn sm', title: t('s.js.exportPageHint'), onclick: () => exportPages([p], 'phonebox-page-' + (p.id || 'page')) }, t('s.js.exportPage')),
-        h('button', { class: 'btn sm', onclick: () => { p.widgets = []; selWidget = -1; renderPageEditor(); changed(); } }, t('s.js.clear')),
+        h('button', { class: 'btn sm danger', onclick: () => { p.widgets = []; selWidget = -1; renderPageEditor(); changed(); } }, t('s.js.clear')),
         h('span', { class: 'spacer' }),
         h('button', { class: 'btn sm' + (isHome(p) ? ' on' : ''), title: t('s.js.homePageHint'),
           onclick: () => { if (!p.id) { toast(t('s.js.saveFirstForId'), true); return; } cfg.display.homePage = p.id; renderPageEditor(); changed(); } },
@@ -2111,7 +2138,7 @@ function haItemsEditor(w, o, set) {
           h('button', { class: 'btn sm', title: t('s.ha.iconTitle'), onclick: () => { picking = picking === i ? -1 : i; render(); } }, picking === i ? t('s.ha.close') : t('s.ha.pickIcon')),
           h('button', { class: 'btn sm', title: t('s.ha.up'), disabled: i === 0, onclick: () => { [rows[i - 1], rows[i]] = [rows[i], rows[i - 1]]; save(); render(); } }, '▲'),
           h('button', { class: 'btn sm', title: t('s.ha.down'), disabled: i === rows.length - 1, onclick: () => { [rows[i + 1], rows[i]] = [rows[i], rows[i + 1]]; save(); render(); } }, '▼'),
-          h('button', { class: 'btn sm', title: t('s.ha.remove'), onclick: () => { rows.splice(i, 1); picking = -1; save(); render(); } }, '✕')),
+          h('button', { class: 'btn sm danger', title: t('s.ha.remove'), 'aria-label': t('s.ha.remove'), onclick: () => { rows.splice(i, 1); picking = -1; save(); render(); } }, icon('x'))),
         picking === i ? h('div', { class: 'emojis' }, h('button', { title: t('s.ha.defaultIconTitle'), style: { width: 'auto', padding: '0 8px', fontSize: '12px' }, onclick: () => pick('') }, t('s.ha.defaultIcon')),
           ...HA_EMOJIS.map((em) => h('button', { 'data-emoji': em, title: em, 'aria-label': em, onclick: () => pick(em) }, rich(em)))) : null,
         h('div', { class: 'row', style: { gap: '4px', marginTop: '4px' } }, check('showIcon', t('s.ha.showIcon'), r.showIcon !== false), check('showName', t('s.ha.showName'), r.showName !== false),
@@ -3063,8 +3090,8 @@ function renderEditor() {
     h('div', { class: 'grid2' },
       h('div', {},
         text('label', t('s.k.label'), t('s.k.labelHint')),
-        h('div', { class: 'field' }, h('label', {}, t('s.z.iconEmoji')), h('div', { class: 'row' }, iconIn),
-          h('div', { class: 'emojis' }, ...EMOJIS.map((em) => h('button', { 'data-emoji': em, title: em, 'aria-label': em, onclick: () => { iconIn.value = em; upd('icon', em); } }, rich(em))))),
+        h('div', { class: 'field' }, h('label', {}, t('s.z.iconEmoji')), h('div', { class: 'row' }, iconField(iconIn)),
+          h('div', { class: 'emojis' }, ...EMOJIS.map((em) => h('button', { 'data-emoji': em, title: em, 'aria-label': em, onclick: () => { iconIn.value = em; iconIn.dispatchEvent(new Event('input')); } }, rich(em))))),
         customIconField(s),
         h('div', { class: 'field' }, h('label', {}, t('s.z.colour')), h('div', { class: 'row' }, colorIn), sw)),
       h('div', {}, ...actionFields(s, upd, text, cmdIn, preset),
@@ -3118,7 +3145,7 @@ function customIconField(s) {
     h('div', { class: 'row', style: { alignItems: 'center', gap: '8px' } },
       preview, file,
       h('button', { class: 'btn sm', type: 'button', onclick: () => file.click() }, t('s.k.upload') + '…'),
-      h('button', { class: 'btn sm', type: 'button', onclick: async () => {
+      h('button', { class: 'btn sm danger', type: 'button', onclick: async () => {
         try {
           const headers = {};
           if (cfgVersion) headers['X-Config-Version'] = cfgVersion;
@@ -3167,7 +3194,7 @@ function actionFields(s, upd, text, cmdIn, preset) {
       h('span', { class: 'hint' }, (i + 1) + '.'),
       h('select', { onchange: (e) => { s.cycle[i] = e.target.value; changed(); } },
         ...choices.map((o) => h('option', { value: o.id, selected: o.id === id }, o.label || o.id))),
-      h('button', { class: 'btn sm', type: 'button', 'aria-label': t('s.k.remove'), onclick: () => { s.cycle.splice(i, 1); changed(); renderEditor(); } }, '×')));
+      h('button', { class: 'btn sm danger', type: 'button', 'aria-label': t('s.k.remove'), onclick: () => { s.cycle.splice(i, 1); changed(); renderEditor(); } }, icon('x'))));
     fields.push(h('div', { class: 'field' }, h('label', {}, t('s.k.cycleKeys')), ...rows,
       h('button', { class: 'btn sm', type: 'button', disabled: !choices.length || s.cycle.length >= 20, onclick: () => { s.cycle.push(choices[0].id); changed(); renderEditor(); } }, t('s.k.cycleAdd')),
       h('span', { class: 'hint' }, t('s.k.cycleHint')),
