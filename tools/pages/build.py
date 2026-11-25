@@ -54,6 +54,7 @@ def build(out):
     (out / 'index.html').write_text(landing_html(), encoding='utf-8')
     for name in ('widgets.json', 'templates.json'): shutil.copy(AGENT / name, out / name)
     shutil.copy(AGENT / 'phonebox.ico', out / 'favicon.ico')
+    shutil.copytree(AGENT / 'settings-assets', out / 'settings', dirs_exist_ok=True)
     shutil.copytree(WWW, out / 'panel', dirs_exist_ok=True, ignore=shutil.ignore_patterns('index.html'))
     (out / 'panel' / 'index.html').write_text(panel_html(), encoding='utf-8')
     (out / 'settings' / 'index.html').write_text(settings_html(), encoding='utf-8')

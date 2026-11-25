@@ -382,6 +382,8 @@ app.MapGet("/", () =>
     using var r = new StreamReader(s);
     return Results.Content(r.ReadToEnd(), "text/html; charset=utf-8");
 });
+app.MapGet("/midnight-letters.otf", () => Results.Stream(AppPaths.Resource("settings-assets/midnight-letters.otf")!, "font/otf"));
+app.MapGet("/midnight-letters-OFL.txt", () => Results.Stream(AppPaths.Resource("settings-assets/midnight-letters-OFL.txt")!, "text/plain; charset=utf-8"));
 // The phone's panel (embedded at build time) for the live preview in the layout editor; local port only.
 app.MapGet("/panel/{*file}", (string? file, HttpRequest req) =>
 {

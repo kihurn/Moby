@@ -72,6 +72,8 @@ def static(path):
     if path == '/favicon.ico': return 'image/x-icon', (site.AGENT / 'phonebox.ico').read_bytes()
     if path in ('/panel/', '/panel/index.html'): return 'text/html', site.panel_html(relay=True).encode()
     if path in ('/settings/', '/settings/index.html'): return 'text/html', site.settings_html(relay=True).encode()
+    if path == '/settings/midnight-letters.otf': return 'font/otf', (site.AGENT / 'settings-assets' / 'midnight-letters.otf').read_bytes()
+    if path == '/settings/midnight-letters-OFL.txt': return 'text/plain', (site.AGENT / 'settings-assets' / 'midnight-letters-OFL.txt').read_bytes()
     if path.startswith('/panel/'):
         f = (site.WWW / path[7:]).resolve()
         if site.WWW in f.parents and f.is_file(): return TYPES.get(f.suffix, 'application/octet-stream'), f.read_bytes()

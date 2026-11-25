@@ -1,5 +1,18 @@
 const { test, expect } = require('@playwright/test');
 
+test('shortcut and webhook controls fit the settings viewport at phone width', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/settings/#shortcuts');
+  await expect(page.locator('#deck .key').first()).toBeVisible();
+  const overflow = () => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(await overflow()).toBeLessThanOrEqual(0);
+
+  await page.locator('#nav a[href="#webhooks"]').click();
+  await expect(page.locator('#nav a[aria-current="page"]')).toHaveAttribute('href', '#webhooks');
+  await expect(page.locator('#whItems tr').first()).toBeVisible();
+  expect(await overflow()).toBeLessThanOrEqual(0);
+});
+
 async function editTheme(page) {
   await page.goto('/settings/#general');
   const theme = page.locator('[data-bind="display.theme"]');

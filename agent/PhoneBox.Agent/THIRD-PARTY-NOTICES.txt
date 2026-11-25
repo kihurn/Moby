@@ -3,6 +3,13 @@ PhoneBox agent: third-party software
 The release agent is self-contained: it includes the .NET runtime and ASP.NET Core, QRCoder, and on Windows also
 Windows Forms, the C#/WinRT projection (WinRT.Runtime, Microsoft.Windows.SDK.NET) and NAudio.
 
+Midnight Letters (settings headings)
+Copyright © 2024 GGBotNet (https://ggbot.net)
+SIL Open Font License 1.1. See midnight-letters-OFL.txt beside the agent,
+or open /midnight-letters-OFL.txt on the agent's local settings server.
+
+--------------------------------------------------------------------------------
+
 .NET runtime, ASP.NET Core, Windows Forms, C#/WinRT
 https://github.com/dotnet/runtime  https://github.com/dotnet/aspnetcore  https://github.com/dotnet/winforms
 https://github.com/microsoft/CsWinRT

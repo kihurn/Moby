@@ -18,7 +18,7 @@ W.mobycall = {
       const stopping = state?.state === 'stopping';
       start.disabled = busy || !online || active || stopping;
       stop.disabled = busy || !online || (!active && state?.state !== 'error');
-      const message = error || (!online ? 'Waiting for PhoneBox' : state?.message)
+      const message = error || (!online ? 'Waiting for Moby' : state?.message)
         || (state?.state === 'live' ? 'Camera and mic live'
           : stopping ? 'Stopping capture…'
           : active ? `Starting · Camera ${state?.camera ? 'ready' : 'waiting'} · Mic ${state?.mic ? 'ready' : 'waiting'}`
@@ -34,7 +34,7 @@ W.mobycall = {
         state = await api(`/moby/call/${action}`, 'POST', action === 'start' ? 10000 : 5000);
       }
       catch (_) {
-        error = 'PhoneBox did not respond. Check the USB connection.';
+        error = 'Moby did not respond. Check the USB connection.';
         errorAt = D.state?.ts || 0;
       }
       finally { busy = false; show(); }

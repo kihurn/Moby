@@ -81,7 +81,7 @@ test('Arabic rule presets and Webhooks examples preserve their technical values'
 test('General keeps the pairing prerequisite and uses physical slider direction', async ({ page }) => {
   await openSettings(page, 'general');
   await expect(page.locator('#general h2')).toHaveText('الإعدادات العامة');
-  await expect(page.locator('[data-i18n-html="s.wifi.lead"]')).toContainText('بعد تفعيل هذا الخيار وإعادة تشغيل PhoneBox');
+  await expect(page.locator('[data-i18n-html="s.wifi.lead"]')).toContainText('بعد تفعيل هذا الخيار وإعادة تشغيل Moby');
   const night = page.locator('[data-bind="night.brightness"]');
   await expect(night).toHaveCSS('direction', 'ltr');
   await night.focus();

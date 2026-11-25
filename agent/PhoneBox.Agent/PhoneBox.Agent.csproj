@@ -60,6 +60,8 @@
     <EmbeddedResource Include="config.default.macos.json" LogicalName="config.default.macos.json" />
     <EmbeddedResource Include="phonebox.ico" LogicalName="phonebox.ico" />
     <EmbeddedResource Include="settings.html" LogicalName="settings.html" />
+    <EmbeddedResource Include="settings-assets/*" LogicalName="settings-assets/%(Filename)%(Extension)" />
+    <None Update="settings-assets/midnight-letters-OFL.txt" TargetPath="midnight-letters-OFL.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <EmbeddedResource Include="widgets.json" LogicalName="widgets.json" />
     <EmbeddedResource Include="templates.json" LogicalName="templates.json" />
     <!-- the phone's panel, served at /panel/ for the live preview in the layout editor -->
