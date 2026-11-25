@@ -14,11 +14,13 @@ internal sealed partial class WindowsDeckNative
     private IReadOnlyList<DeckItem> _plans = [];
     private long _monitorAt, _plansAt;
 
-    public IReadOnlyList<DeckMonitor> Monitors()
+    public IReadOnlyList<DeckMonitor> Monitors() => Monitors(force: false);
+
+    internal IReadOnlyList<DeckMonitor> Monitors(bool force)
     {
         lock (_hardwareGate)
         {
-            if (Environment.TickCount64 - _monitorAt < 30_000 && _monitors.Count > 0) return _monitors;
+            if (!force && Environment.TickCount64 - _monitorAt < 30_000 && _monitors.Count > 0) return _monitors;
             _monitorAt = Environment.TickCount64;
             _monitors = Screen.AllScreens.Select(s =>
             {

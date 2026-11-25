@@ -279,6 +279,7 @@ public sealed class DeskPresenceConfig
 {
     public string Mode { get; set; } = "disabled";
     public int AbsenceSeconds { get; set; } = 120;
+    public int StandbySeconds { get; set; } = 60;
 }
 
 public sealed class UpdateConfig
@@ -763,6 +764,7 @@ public sealed partial class ConfigStore(string path)
         c.DeskPresence ??= new();
         if (c.DeskPresence.Mode is not ("away" or "return")) c.DeskPresence.Mode = "disabled";
         c.DeskPresence.AbsenceSeconds = Math.Clamp(c.DeskPresence.AbsenceSeconds, 10, 3600);
+        c.DeskPresence.StandbySeconds = Math.Clamp(c.DeskPresence.StandbySeconds, 5, 3600);
 
         c.Pages = NormalizePages(c.Pages, out var originalPageIds);
         // an exact match first; a reference with stray spaces around it still finds the page it names

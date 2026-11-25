@@ -22,12 +22,14 @@ Plugcam, Virtual Cables and USBip are separate installs. Moby uses the PhoneBox 
 
 ## Desk presence on Windows
 
-In **Desk presence** in the Windows agent settings, choose a mode and an absence delay from 10 to 3,600 seconds. The default delay is 120 seconds.
+In **Display → Desk presence** in the Windows agent settings, choose a mode and two delays. **Absent before dimming** defaults to 120 seconds and accepts 10 to 3,600 seconds. **Dimmed before monitor standby** defaults to 60 seconds and accepts 5 to 3,600 seconds.
 
 - **Disabled** is the default. Desk presence does not open the camera.
-- **Away only** dims the phone and requests Windows monitor standby after sustained absence and inactivity. Use the mouse, keyboard, or phone to wake both displays.
+- **Away only** dims the phone and supported monitors after sustained absence and inactivity. Continued absence puts the monitors into standby after the second delay. The phone stays dimmed. Use the mouse, keyboard, or phone to restore both displays.
 - **Away + return** also wakes both displays after two consecutive positive face readings. Mouse and keyboard wake still work in darkness.
 
 Keep one Android panel connected over USB and open PhoneBox on the phone. Grant camera permission when Android prompts. The front camera samples locally about every 2.5 seconds. PhoneBox sends only presence states over the USB link and saves no frames. A clear face reading must precede a sustained absence. Low light, a covered camera, and interrupted readings break the absence sequence. Frame the phone so it can see your face in normal desk lighting.
 
-The Windows agent requests that the PC stay awake while the monitor is in standby. Camera sampling pauses for Moby Call and standalone phone microphone capture. In **Away only**, the camera also pauses while the displays are dimmed. Android pauses sampling when PhoneBox leaves the foreground.
+While Desk presence is active over USB, it takes priority over **Brightness follows the room** and **Show the night screen whenever the room is dark**. Those preferences resume when presence is disabled or suspended. Monitor dimming uses the same DDC/CI brightness control as the Windows monitor widget. Displays without that control can still enter standby after the second delay.
+
+The Windows agent requests that the PC stay awake while its monitors are dimmed or in standby. Camera sampling pauses for Moby Call and standalone phone microphone capture. In **Away only**, the camera also pauses once the monitors enter standby. Android pauses sampling when PhoneBox leaves the foreground.

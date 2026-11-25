@@ -10,7 +10,9 @@ test('presence state dims and restores the USB panel, and Call waits for native 
       setBrightness(key, brightness) { window.presenceBridgeCalls.push([key, 'brightness', brightness]); },
       setDeskPresence(key, enabled, release) { window.presenceBridgeCalls.push([key, enabled, release]); },
     };
-    localStorage.setItem('pb-demo-config', JSON.stringify({ night: { enabled: false } }));
+    localStorage.setItem('pb-demo-config', JSON.stringify({
+      night: { enabled: false }, display: { autoBrightness: true, nightWhenDark: true },
+    }));
   });
   await page.goto('/panel/');
   const state = (data) => page.evaluate(async (deskPresence) => {
@@ -19,8 +21,27 @@ test('presence state dims and restores the USB panel, and Call waits for native 
     panel.applyState({ ts: window.presenceTick, deskPresence });
   }, data);
 
+  await expect.poll(() => page.evaluate(async () => (await import('/panel/main.js')).cfg.display?.nightWhenDark)).toBe(true);
+  await page.evaluate(async () => {
+    const panel = await import('/panel/main.js');
+    const now = Date.now;
+    window.onAndroidSensor('light', 1);
+    try {
+      Date.now = () => now() + 31_000;
+      panel.tick();
+    } finally { Date.now = now; }
+  });
+  await expect(page.locator('body')).toHaveClass(/\bnight\b/);
+  await state({ enabled: true, sample: true, dim: false });
+  await expect(page.locator('body')).not.toHaveClass(/\bnight\b/);
+  expect(await page.evaluate(async () => (await import('/panel/main.js')).lastBrightness)).toBe(-1);
+
   await state({ enabled: true, sample: true, dim: true });
   await expect(page.locator('body')).toHaveClass(/desk-away/);
+  await state({ enabled: true, sample: true, dim: true, monitorStandby: true });
+  await page.evaluate(() => window.onAndroidSensor('light', 900));
+  await expect(page.locator('body')).toHaveClass(/desk-away/);
+  expect(await page.evaluate(async () => (await import('/panel/main.js')).lastBrightness)).toBe(0.03);
   expect(await page.evaluate(() => window.presenceBridgeCalls)).toContainEqual(['presence-test', 'brightness', 0.03]);
   expect(await page.evaluate(() => window.presenceBridgeCalls)).toContainEqual(['presence-test', true, 0]);
 

@@ -809,9 +809,10 @@ nav a.on::before { color: var(--accent); }
         <h3>Desk presence</h3>
         <div class="grid2">
           <div class="field"><label for="deskPresenceMode">Mode</label><select id="deskPresenceMode" data-bind="deskPresence.mode"><option value="disabled">Disabled</option><option value="away">Away only</option><option value="return">Away + return</option></select></div>
-          <div class="field"><label for="deskPresenceDelay">Absence delay (seconds)</label><input id="deskPresenceDelay" type="number" min="10" max="3600" data-bind="deskPresence.absenceSeconds" data-type="int"></div>
+          <div class="field"><label for="deskPresenceDelay">Absent before dimming (seconds)</label><input id="deskPresenceDelay" type="number" min="10" max="3600" data-bind="deskPresence.absenceSeconds" data-type="int"></div>
+          <div class="field"><label for="deskPresenceStandbyDelay">Dimmed before monitor standby (seconds)</label><input id="deskPresenceStandbyDelay" type="number" min="5" max="3600" data-bind="deskPresence.standbySeconds" data-type="int"></div>
         </div>
-        <p class="hint">The USB phone checks its front camera locally. When you leave the desk, Moby dims the phone and puts the Windows display into standby. Input wakes both displays. Away + return also wakes them when you come back into view in good light.</p>
+        <p class="hint">Moby dims the phone and supported monitors after you leave. After the second delay, the monitors enter standby and the phone stays dim. Desk presence takes priority over the phone’s room-light settings. Input wakes both displays. Away + return also wakes them when you come back into view in good light.</p>
       </div>
 
       <div class="card">

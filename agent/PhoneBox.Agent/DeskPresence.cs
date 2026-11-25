@@ -4,7 +4,7 @@ using Microsoft.Win32.SafeHandles;
 namespace PhoneBox.Agent;
 
 internal enum DeskReading { Unknown, Absent, Present }
-internal enum DeskAction { None, Standby, Wake }
+internal enum DeskAction { None, Dim, Standby, Wake }
 
 internal sealed class DeskPresencePolicy
 {
@@ -14,6 +14,7 @@ internal sealed class DeskPresencePolicy
     private int _absentCount, _presentCount;
 
     public bool Away => _awaySince.HasValue;
+    public bool InStandby { get; private set; }
 
     public void Observe(DeskReading reading, long now)
     {
@@ -28,7 +29,7 @@ internal sealed class DeskPresencePolicy
                 break;
             case DeskReading.Absent:
                 _presentCount = 0;
-                if (!_seenPresent) break;
+                if (!_seenPresent && !Away) break;
                 _absentSince ??= now;
                 _absentCount++;
                 break;
@@ -44,7 +45,7 @@ internal sealed class DeskPresencePolicy
         ClearSequence();
     }
 
-    public DeskAction Evaluate(long now, long pcIdle, int delay, bool cameraWake)
+    public DeskAction Evaluate(long now, long pcIdle, int delay, int standbyDelay, bool cameraWake)
     {
         var pcInput = now - Math.Max(0, pcIdle);
         var lastInput = Math.Max(pcInput, _phoneInput ?? long.MinValue);
@@ -52,18 +53,23 @@ internal sealed class DeskPresencePolicy
         if (_awaySince is { } awaySince)
         {
             if (lastInput >= awaySince || (cameraWake && fresh && _presentCount >= 2)) return DeskAction.Wake;
+            if (!InStandby && fresh && _absentCount >= 3 && _absentSince is { } absentSince
+                && now - Math.Max(awaySince, absentSince) >= standbyDelay) return DeskAction.Standby;
             return DeskAction.None;
         }
         if (_absentSince is { } began && lastInput >= began) ClearAbsence();
         return fresh && _absentCount >= 3 && _absentSince is { } since
-            && now - since >= delay && now - lastInput >= delay ? DeskAction.Standby : DeskAction.None;
+            && now - since >= delay && now - lastInput >= delay ? DeskAction.Dim : DeskAction.None;
     }
 
     public void SetAway(bool away, long now)
     {
         _awaySince = away ? now : null;
-        ClearEvidence();
+        InStandby = false;
+        if (!away) ClearEvidence();
     }
+
+    public void SetStandby() => InStandby = true;
 
     public void ClearEvidence()
     {
@@ -76,7 +82,7 @@ internal sealed class DeskPresencePolicy
     private void ClearAbsence() { _absentSince = null; _absentCount = 0; }
 }
 
-public sealed record DeskPresenceState(bool Enabled, bool Sample, bool Dim, int CameraRelease = 0);
+public sealed record DeskPresenceState(bool Enabled, bool Sample, bool Dim, int CameraRelease = 0, bool MonitorStandby = false);
 
 /// <summary>Coordinates Windows display standby with readings from the authenticated Android panel.</summary>
 public sealed class DeskPresence(ConfigStore config, AdbReverse adb, MobyCall call, PhoneMic mic, ILogger<DeskPresence> log) : BackgroundService
@@ -89,7 +95,12 @@ public sealed class DeskPresence(ConfigStore config, AdbReverse adb, MobyCall ca
     private int _releaseId;
 #if WINDOWS
     private const int SystemRequired = 1;
+    private const int DisplayRequired = 0;
+    private readonly WindowsDeckNative _monitors = new();
+    private readonly Dictionary<string, int> _savedBrightness = [];
     private SafeFileHandle? _stayAwake;
+    private bool _keepDisplayOn;
+    private long _restoreUntil, _restoreAt;
     private long _retryAt;
 #endif
 
@@ -179,12 +190,16 @@ public sealed class DeskPresence(ConfigStore config, AdbReverse adb, MobyCall ca
                     }
                     else
                     {
-                        var action = _policy.Evaluate(now, (long)(Idle.Seconds() * 1000), options.AbsenceSeconds * 1000, options.Mode == "return");
+                        var action = _policy.Evaluate(now, (long)(Idle.Seconds() * 1000), options.AbsenceSeconds * 1000,
+                            options.StandbySeconds * 1000, options.Mode == "return");
                         if (action == DeskAction.Wake) Wake(now);
+                        else if (action == DeskAction.Dim && _savedBrightness.Count == 0) Dim(now);
                         else if (action == DeskAction.Standby && phone is not null && now >= _retryAt) Standby(now);
                     }
+                    if (!_policy.Away && _savedBrightness.Count > 0 && now >= _restoreAt) RestoreBrightness(now);
                     _state = new(enabled && !callActive, enabled && !callActive && _cameraReleased is null && phone is not null
-                        && (!_policy.Away || options.Mode == "return"), _policy.Away, _cameraReleased is null ? 0 : _releaseId);
+                        && (!_policy.InStandby || options.Mode == "return"), _policy.Away,
+                        _cameraReleased is null ? 0 : _releaseId, _policy.InStandby);
                 }
             }
         }
@@ -197,18 +212,36 @@ public sealed class DeskPresence(ConfigStore config, AdbReverse adb, MobyCall ca
     }
 
 #if WINDOWS
+    private void Dim(long now)
+    {
+        _policy.SetAway(true, now);
+        _retryAt = 0;
+        try
+        {
+            KeepSystemAwake();
+            _keepDisplayOn = PowerSetRequest(_stayAwake!, DisplayRequired);
+            foreach (var monitor in _monitors.Monitors(force: true))
+            {
+                if (monitor.Brightness is not > 1) continue;
+                var original = monitor.Brightness.Value;
+                var dim = Math.Clamp(original / 4, 1, 15);
+                if (_monitors.Brightness(monitor.Id, dim)) _savedBrightness[monitor.Id] = original;
+            }
+        }
+        catch (Exception ex) { log.LogWarning(ex, "Desk presence could not dim the Windows displays"); }
+    }
+
     private void Standby(long now)
     {
         _retryAt = now + 30_000;
         try
         {
-            var reason = Marshal.StringToHGlobalUni("PhoneBox desk presence display standby");
-            try { _stayAwake = PowerCreateRequest(new PowerReason { Flags = 1, Reason = reason }); }
-            finally { Marshal.FreeHGlobal(reason); }
-            if (_stayAwake.IsInvalid || !PowerSetRequest(_stayAwake, SystemRequired))
-                throw new InvalidOperationException("Windows did not grant the system stay-awake request.");
+            KeepSystemAwake();
+            if (_keepDisplayOn && !PowerClearRequest(_stayAwake!, DisplayRequired))
+                throw new InvalidOperationException("Windows did not release the display stay-awake request.");
+            _keepDisplayOn = false;
             Shortcuts.SetMonitorPower(2);
-            _policy.SetAway(true, now);
+            _policy.SetStandby();
             log.LogInformation("Desk presence put the displays into standby");
         }
         catch (Exception ex)
@@ -220,19 +253,50 @@ public sealed class DeskPresence(ConfigStore config, AdbReverse adb, MobyCall ca
 
     private void Wake(long now)
     {
-        try { Shortcuts.SetMonitorPower(-1); }
+        try { if (_policy.InStandby) Shortcuts.SetMonitorPower(-1); }
         catch (Exception ex) { log.LogWarning(ex, "Desk presence could not request display wake"); }
         finally
         {
             ReleaseStayAwake();
             _policy.SetAway(false, now);
+            _restoreUntil = now + 10_000;
+            RestoreBrightness(now);
         }
+    }
+
+    private void RestoreBrightness(long now)
+    {
+        _restoreAt = now + 1_000;
+        foreach (var (id, original) in _savedBrightness.ToArray())
+        {
+            try { if (_monitors.Brightness(id, original)) { _savedBrightness.Remove(id); continue; } }
+            catch (Exception ex) { log.LogDebug(ex, "Desk presence could not restore monitor {Monitor}", id); }
+            if (now < _restoreUntil) continue;
+            _savedBrightness.Remove(id);
+            log.LogWarning("Desk presence could not restore monitor {Monitor} to brightness {Brightness}", id, original);
+        }
+    }
+
+    private void KeepSystemAwake()
+    {
+        if (_stayAwake is not null) return;
+        var reason = Marshal.StringToHGlobalUni("Moby desk presence");
+        try { _stayAwake = PowerCreateRequest(new PowerReason { Flags = 1, Reason = reason }); }
+        finally { Marshal.FreeHGlobal(reason); }
+        if (!_stayAwake.IsInvalid && PowerSetRequest(_stayAwake, SystemRequired)) return;
+        ReleaseStayAwake();
+        throw new InvalidOperationException("Windows did not grant the system stay-awake request.");
     }
 
     private void ReleaseStayAwake()
     {
         if (_stayAwake is null) return;
-        if (!_stayAwake.IsInvalid) PowerClearRequest(_stayAwake, SystemRequired);
+        if (!_stayAwake.IsInvalid)
+        {
+            if (_keepDisplayOn) PowerClearRequest(_stayAwake, DisplayRequired);
+            PowerClearRequest(_stayAwake, SystemRequired);
+        }
+        _keepDisplayOn = false;
         _stayAwake.Dispose();
         _stayAwake = null;
     }

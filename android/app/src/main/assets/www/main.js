@@ -2316,15 +2316,15 @@ function reconcileUnreachableNight(now = new Date()) {
   const delayMin = Math.max(1, Math.min(30, +cfg.display?.unreachableNightDelayMin || 5));
   const unreachable = enabled && unreachableSince > 0
     && Date.now() - unreachableSince >= delayMin * 60_000;
-  const dark = darkRoom && cfg.display?.nightWhenDark === true;
-  setNight((isNight(now) || dark || unreachable) && Date.now() > wakeUntil);
+  const dark = !deskControlsDisplay && darkRoom && cfg.display?.nightWhenDark === true;
+  setNight(!deskDimmed && (isNight(now) || dark || unreachable) && Date.now() > wakeUntil);
 }
 /**
  * Before widgets are built: a timer that ran out while the panel was closed rings during the build, so the night
  * screen must already be on if the schedule says so (nightOn is null at start, and new settings may move the night).
  * Only ever turns night on; tick() keeps the state up to date as before, so the day is unchanged.
  */
-function nightBeforeBuild() { if (isNight(new Date()) && Date.now() > wakeUntil) setNight(true); }
+function nightBeforeBuild() { if (!deskDimmed && isNight(new Date()) && Date.now() > wakeUntil) setNight(true); }
 
 // ---------------------------------------------------------------- phone sensors
 // Room light (lux) and proximity come from the Android shell. Brightness can follow the room, the night screen can
@@ -2333,7 +2333,7 @@ export let lux = null;
 export let darkSince = 0;
 export let darkRoom = false;
 export let lastBrightness = null;
-let deskDimmed = false, deskSampling = false, deskInputAt = 0;
+let deskControlsDisplay = false, deskDimmed = false, deskSampling = false, deskInputAt = 0;
 let deskTouchWakeUntil = 0, deskReleaseId = 0, deskSamplePending = false;
 
 function deskLinked() {
@@ -2344,12 +2344,10 @@ function setDeskDimmed(dim) {
   if (dim === deskDimmed) return;
   deskDimmed = dim;
   document.body.classList.toggle('desk-away', dim);
-  if (!dim) {
+  if (dim) setNight(false);
+  else {
     undim();
-    if (nightOn) {
-      wakeUntil = Date.now() + 30_000;
-      setNight(false);
-    }
+    wakeUntil = Date.now() + 30_000;
   }
   applyBrightness(true);
 }
@@ -2357,7 +2355,14 @@ function setDeskDimmed(dim) {
 function syncDeskPresence() {
   const linked = deskLinked();
   const state = D.state?.deskPresence;
+  const controls = linked && state?.enabled === true;
+  const changed = controls !== deskControlsDisplay;
+  deskControlsDisplay = controls;
   setDeskDimmed(linked && state?.dim === true && Date.now() >= deskTouchWakeUntil);
+  if (changed) {
+    reconcileUnreachableNight();
+    applyBrightness(true);
+  }
   const release = linked ? state?.cameraRelease || 0 : 0;
   const sample = linked && !release && state?.sample === true;
   if (sample !== deskSampling || release !== deskReleaseId) {
@@ -2387,7 +2392,7 @@ export function applyBrightness(force = false) {
   let v = -1; // the phone's own setting
   if (deskDimmed) v = 0.03;
   else if (nightOn) v = cfg.night?.brightness ?? 0.02;
-  else if (cfg.display?.autoBrightness && lux != null) v = luxToBrightness(lux);
+  else if (!deskControlsDisplay && cfg.display?.autoBrightness && lux != null) v = luxToBrightness(lux);
   if (!force && lastBrightness != null && v >= 0 && lastBrightness >= 0 && Math.abs(v - lastBrightness) < 0.04) return;
   lastBrightness = v;
   try { bridge.setBrightness(v); } catch (_) {}
