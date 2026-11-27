@@ -57,7 +57,6 @@ header .ver { color: var(--muted); font-size: 12px; }
 nav { position: sticky; top: 76px; align-self: start; display: flex; flex-direction: column; gap: 2px; }
 nav a { padding: 8px 12px; border-radius: 8px; color: var(--text); text-decoration: none; }
 nav a:hover { background: var(--panel-2); }
-nav a.on { background: var(--panel); box-shadow: var(--shadow); font-weight: 600; border: 1px solid var(--line); }
 section { display: none; scroll-margin-block-start: 80px; }
 section.on { display: block; }
 h2 { font-size: 20px; margin: 0 0 4px; }
@@ -67,6 +66,7 @@ h2 { font-size: 20px; margin: 0 0 4px; }
 .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; min-width: 0; }
 .field label, .field-label { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+.control-group { margin: 0; padding: 0; border: 0; min-inline-size: 0; }
 /* a widget's options in groups: an option with a "section" starts a new one under a small heading */
 .opt-section { margin: 18px 0 10px; padding-top: 12px; border-top: 1px solid var(--line, #e5e7eb); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
 .field .hint { font-size: 12px; color: var(--muted); }
@@ -96,7 +96,6 @@ select option:disabled { color: #a0a0a0; }
 #pageTabs { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 4px; }
 .ptab { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; user-select: none; }
 .ptab:hover { background: var(--panel-2); }
-.ptab.on { background: var(--panel); border-color: var(--line); box-shadow: var(--shadow); font-weight: 600; }
 .ptab.off .pt-name, .ptab.off .pt-ico { opacity: .4; text-decoration: line-through; }
 .ptab.dragging { opacity: .4; }
 .ptab.over { outline: 2px dashed var(--accent); }
@@ -151,7 +150,7 @@ textarea { width: 100%; resize: vertical; }
 .pair-qr { flex: 1 1 260px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
 .pair-qr img { width: min(260px, 100%); aspect-ratio: 1; background: #fff; border-radius: 12px; padding: 6px; }
 .pair-qr.expired img { opacity: .15; }
-.modal-box { background: #191919ec; backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; width: min(1000px, 100%); max-height: 90vh; overflow-y: auto; }
+.modal-box { background: #191919ec; backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; width: min(1000px, 100%); max-height: 90vh; overflow-y: auto; animation: pb-pop .16s var(--ease) backwards; }
 .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
 .tpl { display: flex; flex-direction: column; gap: 4px; text-align: start; padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; }
 .tpl:hover { border-color: var(--accent); }
@@ -425,7 +424,6 @@ nav a { border: 1px solid transparent; padding: 10px 12px; }
 
 @keyframes pb-pop { from { transform: scale(.99); opacity: .8; } }
 @keyframes pb-spin { to { transform: rotate(360deg); } }
-.modal-box { animation: pb-pop .16s var(--ease) backwards; }
 
 /* the toast confirms (peak-end) and keeps an error up longer */
 .toast { display: flex; align-items: center; gap: 9px; max-width: min(92vw, 560px); transition: opacity .2s ease, transform .25s var(--ease); }
@@ -454,9 +452,9 @@ nav { gap: 4px; }
 nav a { display: flex; align-items: center; gap: 10px; color: var(--muted); font-weight: 500; }
 nav a::before { content: ""; width: 18px; height: 18px; flex: none; background: currentColor; -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat; }
 nav a:hover { color: var(--text); }
-nav a.on { background: var(--selected); border-color: var(--selected-line); color: var(--text); font-weight: 650; box-shadow: none; }
+nav a.on { background: var(--selected); border: 1px solid var(--selected-line); color: var(--text); font-weight: 650; box-shadow: none; }
 nav a.on::before { color: var(--accent); }
-.ptab.on { background: var(--selected); border-color: var(--selected-line); box-shadow: none; }
+.ptab.on { background: var(--selected); border-color: var(--selected-line); box-shadow: none; font-weight: 600; }
 .ptab.on .pt-num { color: var(--accent); font-weight: 700; }
 .card { padding: 18px 20px; border-radius: 16px; }
 .card h3 { font-size: 16px; margin-bottom: 14px; }
@@ -625,7 +623,7 @@ nav a.on::before { color: var(--accent); }
         <div class="field"><label for="setting-ping-host" data-i18n="s.ping.label">Host pinged every 5 seconds for the ping metric and the "ping high" rule (empty = off)</label>
           <input id="setting-ping-host" type="text" data-bind="ping.host" placeholder="off" spellcheck="false" autocomplete="off"></div>
         <div class="field" style="margin-top:10px"><span class="field-label" id="netAdaptersLabel" data-i18n="s.net.adapters">Network adapters counted by the network meters</span>
-          <div id="netAdapters" class="hint" role="group" aria-labelledby="netAdaptersLabel"></div>
+          <fieldset id="netAdapters" class="hint control-group" aria-labelledby="netAdaptersLabel"></fieldset>
           <span class="hint" data-i18n="s.net.hint">None ticked = automatic (the connected Ethernet and Wi-Fi adapters). With a VPN that carries the same traffic, or a reading that looks too high, tick only the adapter you use.</span></div>
       </div>
 
@@ -773,14 +771,16 @@ nav a.on::before { color: var(--accent); }
           <label class="check" style="margin-bottom:8px"><input type="checkbox" data-bind="display.artTint"> <span data-i18n="s.display.artTint">Tint the background with the album art</span></label>
         </div>
         <div class="field" style="max-width:640px"><span class="field-label" id="wallpaperLabel" data-i18n="s.display.wallpaper">Wallpaper</span>
-          <div class="row" style="align-items:center;gap:8px;flex-wrap:wrap" role="group" aria-labelledby="wallpaperLabel">
-            <img id="wallpaperPreview" alt="" style="width:96px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--line);display:none">
-            <input type="file" id="wallpaperFile" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" style="display:none">
-            <button class="btn sm" type="button" id="wallpaperUpload" data-i18n="s.display.wallpaperUpload">Choose a picture…</button>
-            <button class="btn sm danger" type="button" id="wallpaperRemove" data-i18n="s.k.remove" style="display:none">Remove</button>
-            <div class="field" style="margin:0;width:110px"><label for="setting-display-wallpaper-dim" data-i18n="s.display.wallpaperDim">Darken (%)</label><input id="setting-display-wallpaper-dim" type="number" min="0" max="90" data-bind="display.wallpaper.dim" data-type="int"></div>
-            <div class="field" style="margin:0;width:110px"><label for="setting-display-wallpaper-blur" data-i18n="s.display.wallpaperBlur">Blur (px)</label><input id="setting-display-wallpaper-blur" type="number" min="0" max="20" data-bind="display.wallpaper.blur" data-type="int"></div>
-          </div>
+          <fieldset class="control-group" aria-labelledby="wallpaperLabel">
+            <div class="row" style="align-items:center;gap:8px;flex-wrap:wrap">
+              <img id="wallpaperPreview" alt="" style="width:96px;height:54px;object-fit:cover;border-radius:6px;border:1px solid var(--line);display:none">
+              <input type="file" id="wallpaperFile" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" style="display:none">
+              <button class="btn sm" type="button" id="wallpaperUpload" data-i18n="s.display.wallpaperUpload">Choose a picture…</button>
+              <button class="btn sm danger" type="button" id="wallpaperRemove" data-i18n="s.k.remove" style="display:none">Remove</button>
+              <div class="field" style="margin:0;width:110px"><label for="setting-display-wallpaper-dim" data-i18n="s.display.wallpaperDim">Darken (%)</label><input id="setting-display-wallpaper-dim" type="number" min="0" max="90" data-bind="display.wallpaper.dim" data-type="int"></div>
+              <div class="field" style="margin:0;width:110px"><label for="setting-display-wallpaper-blur" data-i18n="s.display.wallpaperBlur">Blur (px)</label><input id="setting-display-wallpaper-blur" type="number" min="0" max="20" data-bind="display.wallpaper.blur" data-type="int"></div>
+            </div>
+          </fieldset>
           <span class="hint" data-i18n="s.display.wallpaperHint">A JPEG, PNG or WEBP picture (up to 4 MB) behind every page. It is saved at once; Darken and Blur are saved with the other settings.</span></div>
         <div class="field" style="max-width:420px"><label for="setting-display-orientation" data-i18n="s.display.orientation">Orientation</label>
           <select id="setting-display-orientation" data-bind="display.orientation"><option value="landscape" data-i18n="s.display.orientation.landscape">Landscape</option><option value="portrait" data-i18n="s.display.orientation.portrait">Portrait</option><option value="auto" data-i18n="s.display.orientation.auto">Follow the phone</option></select>
@@ -858,9 +858,11 @@ nav a.on::before { color: var(--accent); }
           <span data-i18n="s.battery.leadMid">levels by switching the phone's power on and off. Phones cannot stop charging by themselves without root, so the power is switched</span>
           <span data-i18n-html="s.battery.leadTail">where it comes from: a <b>smart plug in Home Assistant</b> (the phone on its own charger), or two <b>shortcuts</b>, for example
           <code>uhubctl</code> for a USB hub with switchable ports. Without USB power the panel keeps running over Wi-Fi.</span></p>
-        <div class="row" style="margin-bottom:12px" role="group" aria-labelledby="label-charge-enabled"><label class="switch"><input type="checkbox" data-bind="charge.enabled" aria-labelledby="label-charge-enabled"><span></span></label> <span id="label-charge-enabled" data-i18n="s.battery.keepBetween">Keep the battery between</span>
-          <input type="number" min="5" max="95" data-bind="charge.min" data-type="int" style="width:70px" aria-label="From" data-i18n-aria="s.night.from"> % <span id="chargeRangeAnd">and</span>
-          <input type="number" min="10" max="100" data-bind="charge.max" data-type="int" style="width:70px" aria-label="To" data-i18n-aria="s.night.to"> %</div>
+        <fieldset class="control-group" aria-labelledby="label-charge-enabled">
+          <div class="row" style="margin-bottom:12px"><label class="switch"><input type="checkbox" data-bind="charge.enabled" aria-labelledby="label-charge-enabled"><span></span></label> <span id="label-charge-enabled" data-i18n="s.battery.keepBetween">Keep the battery between</span>
+            <input type="number" min="5" max="95" data-bind="charge.min" data-type="int" style="width:70px" aria-label="From" data-i18n-aria="s.night.from"> % <span id="chargeRangeAnd">and</span>
+            <input type="number" min="10" max="100" data-bind="charge.max" data-type="int" style="width:70px" aria-label="To" data-i18n-aria="s.night.to"> %</div>
+        </fieldset>
         <div class="grid2">
           <div class="field"><label for="setting-charge-method" data-i18n="s.battery.method">Switch the power with</label><select id="setting-charge-method" data-bind="charge.method"><option value="ha" data-i18n="s.battery.methodHa">a Home Assistant switch (smart plug)</option><option value="shortcuts" data-i18n="s.battery.methodShortcuts">two shortcuts (power on / power off)</option></select></div>
           <div class="field" id="chargeHa"><label for="setting-charge-entity" data-i18n="s.battery.entity">Switch entity</label><input id="setting-charge-entity" type="text" data-bind="charge.entity" placeholder="switch.phone_charger" spellcheck="false"></div>
@@ -911,11 +913,13 @@ nav a.on::before { color: var(--accent); }
         <h3 data-i18n="s.quotas.title">AI quotas &amp; CodexBar</h3>
         <p class="hint" style="margin:0 0 12px" data-i18n="s.quotas.lead">Choose which AI coding services to track and show on the panel, and configure rotation.</p>
         <div class="field"><span class="field-label" id="trackedServicesLabel" data-i18n="s.quotas.tracked">Tracked AI services</span>
-          <div class="opts" role="group" aria-labelledby="trackedServicesLabel">
-            <label class="check"><input type="checkbox" id="cb_claude"> Claude</label>
-            <label class="check"><input type="checkbox" id="cb_codex"> Codex</label>
-            <label class="check"><input type="checkbox" id="cb_antigravity"> Antigravity</label>
-          </div>
+          <fieldset class="control-group" aria-labelledby="trackedServicesLabel">
+            <div class="opts">
+              <label class="check"><input type="checkbox" id="cb_claude"> Claude</label>
+              <label class="check"><input type="checkbox" id="cb_codex"> Codex</label>
+              <label class="check"><input type="checkbox" id="cb_antigravity"> Antigravity</label>
+            </div>
+          </fieldset>
         </div>
         <div class="field" style="margin-top:10px">
           <label class="check"><input type="checkbox" data-bind="codexBar.rotate"> <span data-i18n="s.quotas.rotate">Rotate providers automatically</span></label>
@@ -3759,7 +3763,7 @@ function bindForm() {
       if (type === 'num') val = parseFloat(val);
       if (p === 'mobyCameraExposureEv' && !Number.isFinite(val)) val = 0;
       if (type === 'int') val = parseInt(val || '0', 10);
-      if (type === 'hour12') val = val === 'true' ? true : val === 'auto' ? 'auto' : false;
+      if (type === 'hour12' && val !== 'auto') val = val === 'true';
       if (p === 'adbPath' && val === '') val = null;
       setPath(cfg, p, val);
       $('nbv').textContent = Math.round(cfg.night.brightness * 100) + '%';

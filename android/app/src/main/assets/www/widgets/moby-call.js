@@ -1,6 +1,23 @@
 import { D, api, cancelDraggedClick, h, haptic, online, rateStr } from '../main.js';
 import { W } from '../registry.js';
 
+function callStatus(state, phoneMic) {
+  switch (state?.state) {
+    case 'live':
+      if (state.mic) return 'Camera and mic live';
+      if (phoneMic?.live && phoneMic.muted) return 'Camera live · Mic muted';
+      return 'Camera live';
+    case 'standby': return 'Camera ready · waiting for a Windows app';
+    case 'stopping': return 'Stopping capture…';
+    case 'starting': {
+      const camera = state.camera ? 'ready' : 'waiting';
+      const mic = state.mic ? 'ready' : 'waiting';
+      return `Starting · Camera ${camera} · Mic ${mic}`;
+    }
+    default: return 'Capture is off';
+  }
+}
+
 W.mobycall = {
   needs: ['state'],
   create(box) {
@@ -24,12 +41,7 @@ W.mobycall = {
       camera.disabled = busy || !online || active || stopping;
       stop.disabled = busy || !online || (!active && !standby && state?.state !== 'error');
       const message = error || (!online ? 'Waiting for Moby' : state?.message || state?.micMessage)
-        || (state?.state === 'live' ? (state.mic ? 'Camera and mic live'
-          : D.state?.phoneMic?.live && D.state.phoneMic.muted ? 'Camera live · Mic muted' : 'Camera live')
-          : standby ? 'Camera ready · waiting for a Windows app'
-          : stopping ? 'Stopping capture…'
-          : active ? `Starting · Camera ${state?.camera ? 'ready' : 'waiting'} · Mic ${state?.mic ? 'ready' : 'waiting'}`
-          : 'Capture is off');
+        || callStatus(state, D.state?.phoneMic);
       if (status.textContent !== message) status.textContent = message;
     };
     async function change(action, cameraOnly = false) {

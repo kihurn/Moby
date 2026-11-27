@@ -27,6 +27,7 @@ _spec = importlib.util.spec_from_file_location('pages_build', PAGES / 'build.py'
 site = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(site)
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8790
+TEXT_PLAIN = 'text/plain'
 
 # webhooks received by this server, relayed to the open tabs over /demo/events (server-sent events)
 EVENTS, LOCK = [], threading.Condition()
@@ -73,7 +74,7 @@ def static(path):
     if path in ('/panel/', '/panel/index.html'): return 'text/html', site.panel_html(relay=True).encode()
     if path in ('/settings/', '/settings/index.html'): return 'text/html', site.settings_html(relay=True).encode()
     if path == '/settings/midnight-letters.otf': return 'font/otf', (site.AGENT / 'settings-assets' / 'midnight-letters.otf').read_bytes()
-    if path == '/settings/midnight-letters-OFL.txt': return 'text/plain', (site.AGENT / 'settings-assets' / 'midnight-letters-OFL.txt').read_bytes()
+    if path == '/settings/midnight-letters-OFL.txt': return TEXT_PLAIN, (site.AGENT / 'settings-assets' / 'midnight-letters-OFL.txt').read_bytes()
     if path.startswith('/panel/'):
         f = (site.WWW / path[7:]).resolve()
         if site.WWW in f.parents and f.is_file(): return TYPES.get(f.suffix, 'application/octet-stream'), f.read_bytes()
@@ -121,14 +122,14 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(411, 'application/json', b'{"error":"send the body with a Content-Length"}', {'Connection': 'close'})
         body = self.rfile.read(int(self.headers.get('Content-Length') or 0)) or None
         if path == '/demo/events': return self.events()
-        if path in ('/panel', '/settings'): return self.send(301, 'text/plain', b'', {'Location': path + '/'})
+        if path in ('/panel', '/settings'): return self.send(301, TEXT_PLAIN, b'', {'Location': path + '/'})
         reply = webhook(self.command, path[len('/agent'):] if path.startswith('/agent/api/') else path, body)
         if reply is not None: return self.send(200, 'application/json', json.dumps(reply).encode())
         if path.startswith('/api/'):
             return self.send(404, 'application/json', b'{"error":"the demo answers this in the browser (tools/pages/demo.js)"}')
         hit = static(path)
         if hit: return self.send(200, *hit)
-        self.send(404, 'text/plain', b'not found')
+        self.send(404, TEXT_PLAIN, b'not found')
 
     do_GET = do_POST = do_PUT = do_DELETE = handle_any
 

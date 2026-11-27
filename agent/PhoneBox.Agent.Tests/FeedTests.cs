@@ -26,7 +26,7 @@ public sealed class FeedParserTests
         var uri = FeedParser.SafeLink("https://example.com/?q=" + new string('a', 450) + "&x=[1]")!;
         var psi = FeedMonitor.BrowserStart(uri, windows: true, mac: false);
         Assert.Equal("rundll32.exe", Path.GetFileName(psi.FileName).ToLowerInvariant());
-        Assert.False(psi.UseShellExecute); // .coderabbit.yaml: ArgumentList only, no shell
+        Assert.False(psi.UseShellExecute); // ArgumentList keeps feed URLs out of the shell.
         Assert.Equal(["url.dll,FileProtocolHandler", FeedParser.LaunchAddress(uri)], psi.ArgumentList);
     }
 

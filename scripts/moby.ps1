@@ -212,7 +212,7 @@ if ($Action -eq 'standby') {
         Write-Host 'Moby is on standby. The camera wakes when a Windows app requests video.'
         return
     }
-    Write-Host 'Moby is on standby. Start capture from the Call widget or run moby.ps1 start.'
+    Write-Host 'Moby is on standby. Start capture from the Call widget or run moby start.'
     return
 }
 

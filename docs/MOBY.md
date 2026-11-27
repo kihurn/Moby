@@ -26,16 +26,27 @@ With the [Moby exposure build of Plugcam](../extras/moby-exposure/README.md), se
 
 Camera2 applies this setting during capture using the selected lens's reported step and range. The virtual device remains **Plugcam Camera**.
 
-### Start and stop from PowerShell
+### Start and stop from a terminal
 
-On this workstation, run these from the Moby checkout. The launcher uses port 18765 and the existing `.moby-spike\baseline-config.json` profile. For another installation, supply `-AgentPath` and `-ConfigPath`.
+The launcher uses port 18765 and the existing `.moby-spike\baseline-config.json` profile. For another installation, supply `-AgentPath` and `-ConfigPath`.
+
+To run `moby` from any folder, create `moby.cmd` in a folder on your `PATH` that contains this line, with the path of your checkout:
+
+```bat
+@call "C:\path\to\Moby\scripts\moby.cmd" %*
+```
+
+Then open a new terminal:
 
 ```powershell
-.\scripts\moby.ps1 start
-.\scripts\moby.ps1 standby
-.\scripts\moby.ps1 status
-.\scripts\moby.ps1 stop
+moby start
+moby camera
+moby standby
+moby status
+moby stop
 ```
+
+Without that file, run `.\scripts\moby.cmd start` from the checkout.
 
 `start` starts Virtual Cables if needed, starts the agent with the saved profile, and waits for both feeds. If the phone is missing and the bundled ADB server stops answering, the launcher checks that it is Moby's shared server and attempts one restart while capture is inactive. Use `camera` for video only. You can add the mic with `start` while the camera stays live. For mic only, use **General → Phone mic** in Moby Settings.
 

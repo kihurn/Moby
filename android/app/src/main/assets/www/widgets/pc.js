@@ -36,7 +36,7 @@ const htmlPrelude = (key, origin) => `<!doctype html><meta charset="utf-8"><meta
   }, { once: true });
   parent.postMessage({ phonebox: 'connect', key: ${JSON.stringify(key)} }, ${JSON.stringify(origin)}, [port2]);
 })();
-<\/script>`;
+</script>`;
 export const HTML_KINDS = ['state', 'push', 'weather', 'work', 'quotas'];
 
 W.html = {
@@ -1190,6 +1190,50 @@ function phoneMicLabel(mic) {
   return mic.state === 'error' ? 'Mic unavailable' : 'Mic off';
 }
 
+function onAirPushValue(key) {
+  const value = key ? D.push?.[key]?.data : null;
+  if (value && typeof value === 'object' && 'value' in value) return value.value;
+  return value;
+}
+
+function onAirSources(src, touch, capture, pushKey) {
+  const privacy = D.state?.privacy;
+  const phoneMic = D.state?.phoneMic;
+  const showMic = src === 'both' || src === 'mic';
+  const phoneMicSelected = showMic && phoneMic?.state && phoneMic.state !== 'off';
+  const mic = showMic && (phoneMicSelected ? phoneMic.live && !phoneMic.muted : !!privacy?.mic);
+  const cam = (src === 'both' || src === 'camera') && (touch ? !!capture?.camera : !!privacy?.camera);
+  const obs = D.state?.obs;
+  const obsLive = (src === 'both' || src === 'obs') && !!obs && (obs.streaming || (obs.recording && !obs.recordPaused));
+  const pv = onAirPushValue(pushKey);
+  const pushed = pv != null && pv !== false && pv !== 0 && !/^(|0|false|off|no)$/i.test(String(pv));
+  return { privacy, phoneMic, showMic, phoneMicSelected, mic, cam, obs, obsLive, pv, pushed };
+}
+
+function onAirCameraText(phase, cam) {
+  if (phase === 'stopping') return 'Camera stopping…';
+  if (cam) return 'Camera live';
+  if (phase === 'starting') return 'Camera starting…';
+  return phase === 'standby' ? 'Camera armed' : 'Camera off';
+}
+
+function onAirActiveText({ mic, cam, obs, obsLive, privacy, phoneMicSelected, pushed, pv }, touch, micText) {
+  const micApps = mic && !phoneMicSelected ? privacy?.micApps || [] : [];
+  const cameraApps = cam && !touch ? privacy?.cameraApps || [] : [];
+  const apps = [...new Set([...micApps, ...cameraApps])].join(', ');
+  let obsText = '';
+  if (obsLive) obsText = obs.streaming ? tp('OBS live') : tp('OBS recording');
+  const pushText = pushed && typeof pv === 'string' ? pv : '';
+  return [micText || (mic ? '🎙️' : ''), cam ? '📷' : '', obsText, apps || pushText]
+    .filter(Boolean).join(' ');
+}
+
+function onAirInactiveText(src, privacy, micText) {
+  if (micText) return micText;
+  if ((src === 'mic' || src === 'camera') && privacy && privacy.mic == null) return tp('Not detectable on this computer');
+  return src === 'mic' ? 'Mic off' : tp('Off air');
+}
+
 // Lights up while the PC's microphone or camera is in use (agent: PrivacyMonitor) or while a pushed value is on.
 W.onair = {
   needs: ['state', 'push'],
@@ -1198,35 +1242,25 @@ W.onair = {
     const sign = h('span', 'oa-sign', o.text || o.title || tp('ON AIR')), sub = h('span', 'oa-sub');
     const src = o.source || 'both';
     const touch = o.touchToggle === true;
+    const pushKey = o.key ?? 'onair'; // An empty field disables the pushed value.
     function show(capture = D.state?.mobyCall, problem = '') {
-      const p = D.state?.privacy;
-      const phoneMic = D.state?.phoneMic;
-      const showMic = src === 'both' || src === 'mic';
-      const phoneMicSelected = showMic && phoneMic?.state && phoneMic.state !== 'off';
-      const mic = showMic && (phoneMicSelected ? phoneMic.live && !phoneMic.muted : !!p?.mic);
-      const cam = (src === 'both' || src === 'camera') && (touch ? !!capture?.camera : !!p?.camera);
-      const obs = D.state?.obs;
-      const obsLive = (src === 'both' || src === 'obs') && !!obs && (obs.streaming || (obs.recording && !obs.recordPaused));
-      const pushKey = o.key ?? 'onair'; // the catalog's default; an emptied field means no pushed value
-      let pv = pushKey ? D.push?.[pushKey]?.data : null;
-      if (pv && typeof pv === 'object' && 'value' in pv) pv = pv.value;
-      const pushed = pv != null && pv !== false && pv !== 0 && !/^(|0|false|off|no)$/i.test(String(pv));
+      const sources = onAirSources(src, touch, capture, pushKey);
+      const { privacy, phoneMic, showMic, phoneMicSelected, mic, cam, obsLive, pushed } = sources;
       const on = mic || cam || obsLive || pushed;
       box.classList.toggle('on', on);
       if (problem) { sub.textContent = problem; return; }
-      const micText = phoneMicSelected ? phoneMicLabel(phoneMic) : showMic && capture?.micMessage ? 'Mic unavailable' : '';
-      const cameraText = capture?.state === 'stopping' ? 'Camera stopping…' : cam ? 'Camera live'
-        : capture?.state === 'starting' ? 'Camera starting…' : capture?.state === 'standby' ? 'Camera armed' : 'Camera off';
+      let micText = '';
+      if (phoneMicSelected) micText = phoneMicLabel(phoneMic);
+      else if (showMic && capture?.micMessage) micText = 'Mic unavailable';
+      const cameraText = onAirCameraText(capture?.state, cam);
       if (src === 'mic' && micText) { sub.textContent = micText; return; }
       if (touch && src === 'camera') { sub.textContent = cameraText; return; }
       if (touch && src === 'both' && !obsLive && !pushed) {
         sub.textContent = [micText || (mic ? 'Mic in use' : ''), cameraText].filter(Boolean).join(' · ');
         return;
       }
-      const apps = [...new Set([...(mic && !phoneMicSelected ? p?.micApps || [] : []), ...(cam && !touch ? p?.cameraApps || [] : [])])];
-      sub.replaceChildren(rich(on
-        ? [micText || (mic ? '🎙️' : ''), cam ? '📷' : '', obsLive ? (obs.streaming ? tp('OBS live') : tp('OBS recording')) : '', apps.join(', ') || (pushed && typeof pv === 'string' ? pv : '')].filter(Boolean).join(' ')
-        : micText || ((src === 'mic' || src === 'camera') && p && p.mic == null ? tp('Not detectable on this computer') : src === 'mic' ? 'Mic off' : tp('Off air'))));
+      const text = on ? onAirActiveText(sources, touch, micText) : onAirInactiveText(src, privacy, micText);
+      sub.replaceChildren(rich(text));
     }
     if (touch) return onAirCapture(box, sign, sub, show);
     box.append(sign, sub);
