@@ -87,9 +87,9 @@ PhoneBox는 휴대전화와 컴퓨터를 직접 연결합니다. 계정이 필�
 - [테마, 서체 및 미리보기](APPEARANCE.md)
 - [Control Deck 가이드](CONTROL-DECK.md)
 - [개발 및 테스트](DEVELOPMENT.md)
-- [개인정보 보호 정책](../PRIVACY.md)
-- [변경 사항](../CHANGELOG.md)
+- [개인정보 보호 정책](PRIVACY.md)
+- [변경 사항](CHANGELOG.md)
 
 ## 라이선스
 
-[PhoneBox MIT 라이선스로 배포됩니다.](../LICENSE)
+[PhoneBox MIT 라이선스로 배포됩니다.](LICENSE)

@@ -27,4 +27,4 @@ Desk presence is off by default. **Away only** dims the phone and puts the monit
 
 The phone processes presence locally and sends only the result over USB. Camera sampling pauses during call capture. The absence delay and camera setup are in the [desk presence guide](docs/MOBY.md#desk-presence-on-windows).
 
-Moby builds on [PhoneBox](https://github.com/ersinkoc/phonebox). See the [license](LICENSE).
+Moby builds on [PhoneBox](https://github.com/ersinkoc/phonebox). See the [license](docs/LICENSE).

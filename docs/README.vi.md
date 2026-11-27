@@ -43,7 +43,7 @@ Windows, Linux và macOS. Không cần root, tài khoản PhoneBox hay dịch v�
   <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Bản phát hành mới nhất"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-7%2B-3ddc84" alt="Android 7+">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Giấy phép MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Giấy phép MIT"></a>
 </p>
 
 <p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox trên ba chiếc điện thoại hiển thị các trang tự động hóa, trang chủ và lập kế hoạch"><br>
@@ -164,8 +164,8 @@ bản dựng phát hành. Xem [bảng tương thích đầy đủ](SETUP.md#what
 | [Control Deck](CONTROL-DECK.md) | Âm thanh, đa phương tiện, OBS, phím tắt, tác vụ, giao thức, thành phần phụ thuộc và giới hạn nền tảng |
 | [Widget Discord](DISCORD.md) | Tạo ứng dụng Discord, kết nối, điều khiển và khắc phục sự cố |
 | [Phát triển](DEVELOPMENT.md) | Kiến trúc, demo cục bộ, bản dựng, kiểm thử, nguồn widget và chạy agent tách biệt |
-| [Đóng góp](../CONTRIBUTING.md) | Phạm vi đóng góp, kỳ vọng khi review, quyền riêng tư và các kiểm tra bắt buộc |
-| [Nhật ký thay đổi](../CHANGELOG.md) | Lịch sử phát hành và các thay đổi chưa phát hành |
+| [Đóng góp](CONTRIBUTING.md) | Phạm vi đóng góp, kỳ vọng khi review, quyền riêng tư và các kiểm tra bắt buộc |
+| [Nhật ký thay đổi](CHANGELOG.md) | Lịch sử phát hành và các thay đổi chưa phát hành |
 | [Danh sách kiểm tra phát hành](RELEASING.md) | Quy trình dựng, ký số và công bố của người bảo trì |
 
 Các [tiện ích bổ sung cho UMIDIGI BISON](../extras/umidigi-bison) chứa bản tinh chỉnh có thể hoàn tác, không cần root, từng được dùng trên chiếc điện thoại phát triển gốc.
@@ -179,8 +179,8 @@ luôn ở cục bộ. Điện thoại yêu cầu các hành động đã cấu h
 PhoneBox không có hệ thống đo lường từ xa (telemetry), phân tích hay tài khoản riêng. Các widget và tích hợp tùy chọn sẽ liên hệ với
 các dịch vụ bên ngoài để lấy dữ liệu thời tiết, hạn mức, GitHub và các dữ liệu khác, và agent sẽ kiểm tra bản cập nhật trên GitHub.
 Các nguồn cấp công khai được hỗ trợ có thể dự phòng qua agent bằng USB khi điện thoại không có internet.
-[Chính sách quyền riêng tư](../PRIVACY.md) liệt kê các kết nối ra ngoài và cách tắt chúng.
-Đọc [chi tiết bảo mật](GUIDE.md#security--privacy). Để báo cáo một lỗ hổng bảo mật, hãy làm theo [SECURITY.md](../SECURITY.md).
+[Chính sách quyền riêng tư](PRIVACY.md) liệt kê các kết nối ra ngoài và cách tắt chúng.
+Đọc [chi tiết bảo mật](GUIDE.md#security--privacy). Để báo cáo một lỗ hổng bảo mật, hãy làm theo [SECURITY.md](SECURITY.md).
 
 ## Phát triển
 
@@ -195,7 +195,7 @@ python tools/demo-server.py
 
 Mở <http://127.0.0.1:8790/panel/> hoặc <http://127.0.0.1:8790/settings/>.
 Xem [các lệnh phát triển](DEVELOPMENT.md#development) để chạy agent, dựng APK và kiểm thử thay đổi.
-Rất hoan nghênh đóng góp; hãy bắt đầu với [CONTRIBUTING.md](../CONTRIBUTING.md).
+Rất hoan nghênh đóng góp; hãy bắt đầu với [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Chính sách ký mã
 
@@ -209,7 +209,7 @@ Ký mã miễn phí do [SignPath.io](https://about.signpath.io/) cung cấp, ch�
 - **Ứng dụng Android:** các APK bản phát hành dùng khóa ký riêng của dự án, độc lập với SignPath.
 - **Vai trò trong nhóm:** người commit, người review và người phê duyệt ký số: [ersinkoc](https://github.com/ersinkoc).
   Pull request từ các cộng tác viên khác sẽ được review trước khi hợp nhất.
-- **Quyền riêng tư:** xem [chính sách quyền riêng tư](../PRIVACY.md).
+- **Quyền riêng tư:** xem [chính sách quyền riêng tư](PRIVACY.md).
 
 ## Lời cảm ơn
 
@@ -245,4 +245,4 @@ Những người đã thử nghiệm PhoneBox trên phần cứng của chính h
 
 ## Giấy phép
 
-[MIT](../LICENSE)
+[MIT](LICENSE)

@@ -17,7 +17,7 @@ computer.
 Only the state: `Working`, `Turn finished` or `Needs attention`. The agent adds the time it arrived. The script reads
 the hook input (which holds your prompt, folder and session) and throws it away without parsing it, so prompts,
 replies, folder paths, session names, tool names, arguments and output never leave Copilot CLI. Webhooks are inbound
-only; see the Webhooks row in [PRIVACY.md](../PRIVACY.md).
+only; see the Webhooks row in [PRIVACY.md](PRIVACY.md).
 
 With several sessions open, the widget shows the latest change from any of them.
 

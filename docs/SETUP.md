@@ -92,7 +92,7 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 - **Wi-Fi is off until you turn it on.** Until then the agent listens only on this computer (`127.0.0.1:8765`).
   When you turn it on, Windows asks to let PhoneBox through the firewall: allow *Private* networks only. On Linux
   with ufw or firewalld, open TCP port 8766 for your local network. Every connection PhoneBox makes is listed in
-  the [privacy policy](../PRIVACY.md).
+  the [privacy policy](PRIVACY.md).
 - **Linux USB permissions**: if `adb devices` shows `no permissions`, adb also needs udev rules. Install
   `android-sdk-platform-tools-common` on Debian/Ubuntu or `android-udev` on Arch. Some systems also need the
   `plugdev` group (`sudo usermod -aG plugdev $USER`, then log out and in). Setup points this out when it happens.
@@ -300,7 +300,7 @@ When GitHub turns away anonymous requests (it answers 503 / 504 now and then), t
 A Mac agent running from `PhoneBox.app` (the `.dmg` of a release) updates the same way, by replacing the whole app: it
 downloads the release's `PhoneBox-<version>-<rid>.dmg`, checks it against the release checksums and the new app's signature, swaps it
 in and restarts. The app must sit in a folder you can write to, such as `~/Applications`.
-See the [changelog](../CHANGELOG.md).
+See the [changelog](CHANGELOG.md).
 
 ## FAQ & troubleshooting
 

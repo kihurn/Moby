@@ -87,9 +87,9 @@ PhoneBox підключає телефон до комп’ютера напря
 - [Теми, шрифти і перегляд](APPEARANCE.md)
 - [Посібник по Control Deck](CONTROL-DECK.md)
 - [Розробка і тестування](DEVELOPMENT.md)
-- [Правила конфіденційності](../PRIVACY.md)
-- [Журнал змін](../CHANGELOG.md)
+- [Правила конфіденційності](PRIVACY.md)
+- [Журнал змін](CHANGELOG.md)
 
 ## Ліцензія
 
-[PhoneBox випущений під ліцензією MIT.](../LICENSE)
+[PhoneBox випущений під ліцензією MIT.](LICENSE)

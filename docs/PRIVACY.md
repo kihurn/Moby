@@ -96,7 +96,7 @@ Last updated: 2026-11-20 (PhoneBox 0.9.6).
   (loopback, over HTTP or HTTPS), the Docker / Podman socket, OBS WebSocket and the Discord desktop app's local connection (a named pipe
   or socket on this computer) are local connections.
 
-[`scripts/uninstall.ps1 -Purge`](scripts/uninstall.ps1) and [`scripts/uninstall.sh --purge`](scripts/uninstall.sh)
+[`scripts/uninstall.ps1 -Purge`](../scripts/uninstall.ps1) and [`scripts/uninstall.sh --purge`](../scripts/uninstall.sh)
 remove the agent together with its settings, pushed data and log (without the switch, settings are kept). Uninstalling
 the Android app removes everything on the phone.
 

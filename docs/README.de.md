@@ -43,7 +43,7 @@ Windows, Linux und macOS. Kein Root, kein PhoneBox-Konto und kein Cloud-Dienst n
   <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Neueste Version"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT-Lizenz"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT-Lizenz"></a>
 </p>
 
 <p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox auf drei Smartphones mit Automatisierungs-, Start- und Planerseiten"><br>
@@ -100,13 +100,13 @@ Das Setup lädt das neueste Release herunter, prüft die SHA-256-Prüfsumme und 
 | [Erscheinungsbild](APPEARANCE.md) | Schriftarten, Oberflächen, Voreinstellungen und Live-Vorschau |
 | [Control Deck](CONTROL-DECK.md) | Audio, Medien, OBS, Verknüpfungen, Aufgaben und Systemlimits |
 | [Entwicklung](DEVELOPMENT.md) | Architektur, lokale Demo, Builds und Tests |
-| [Mitwirken](../CONTRIBUTING.md) | Beitragsrichtlinien und Datenschutz |
-| [Änderungsprotokoll](../CHANGELOG.md) | Versionsverlauf |
+| [Mitwirken](CONTRIBUTING.md) | Beitragsrichtlinien und Datenschutz |
+| [Änderungsprotokoll](CHANGELOG.md) | Versionsverlauf |
 
 ## Sicherheit & Datenschutz
 
-Der Einstellungsserver läuft lokal auf `127.0.0.1:8765` (USB über `adb reverse`, WLAN über HTTPS Port 8766 mit gepinntem Zertifikat). PhoneBox hat keine eigene Telemetrie oder Konten. Siehe [Datenschutzrichtlinie](../PRIVACY.md) und [SECURITY.md](../SECURITY.md).
+Der Einstellungsserver läuft lokal auf `127.0.0.1:8765` (USB über `adb reverse`, WLAN über HTTPS Port 8766 mit gepinntem Zertifikat). PhoneBox hat keine eigene Telemetrie oder Konten. Siehe [Datenschutzrichtlinie](PRIVACY.md) und [SECURITY.md](SECURITY.md).
 
 ## Lizenz
 
-[MIT](../LICENSE)
+[MIT](LICENSE)

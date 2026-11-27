@@ -43,7 +43,7 @@ Windows, Linux ve macOS. Root, PhoneBox hesabı veya bulut hizmeti gerekmez.</p>
   <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Son sürüm"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT lisansı"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT lisansı"></a>
 </p>
 
 <p align="center"><img src="hero-0.6.png" width="900" alt="Otomasyon, ana sayfa ve planlayıcı sayfalarını gösteren üç telefonda PhoneBox"><br>
@@ -139,13 +139,13 @@ Ekran görüntüleri demo verileri kullanır. [Şablon galerisi ve widget'lara g
 | [Görünüm](APPEARANCE.md) | Yazı tipleri, yüzeyler, ön ayarlar, kalıtım ve canlı önizleme |
 | [Control Deck](CONTROL-DECK.md) | Ses, medya, OBS, kısayollar, görevler, protokoller ve platform sınırları |
 | [Geliştirme](DEVELOPMENT.md) | Mimari, yerel demo, derlemeler, testler ve izole ajan çalıştırma |
-| [Katkıda bulunma](../CONTRIBUTING.md) | Katkı kapsamı, inceleme beklentileri, gizlilik ve zorunlu kontroller |
-| [Değişiklik günlüğü](../CHANGELOG.md) | Sürüm geçmişi ve yayınlanmamış değişiklikler |
+| [Katkıda bulunma](CONTRIBUTING.md) | Katkı kapsamı, inceleme beklentileri, gizlilik ve zorunlu kontroller |
+| [Değişiklik günlüğü](CHANGELOG.md) | Sürüm geçmişi ve yayınlanmamış değişiklikler |
 | [Sürüm kontrol listesi](RELEASING.md) | Bakımcı derleme, imzalama ve yayınlama iş akışı |
 
 ## Güvenlik ve gizlilik
 
-Masaüstü ayar sunucusu `127.0.0.1:8765` adresini dinler; USB bağlantısı `adb reverse` üzerinden ulaşır. İsteğe bağlı Wi-Fi bağlantısı 8766 portunda sabitlenmiş sertifika ve eşleştirilmiş anahtarla HTTPS kullanır. Ayarlar ve eşleştirme uç noktaları yerel kalır. PhoneBox kendi telemetri, analiz veya hesap sistemine sahip değildir. Ayrıntılar için [gizlilik politikasına](../PRIVACY.md) ve [SECURITY.md](../SECURITY.md) dosyasına bakın.
+Masaüstü ayar sunucusu `127.0.0.1:8765` adresini dinler; USB bağlantısı `adb reverse` üzerinden ulaşır. İsteğe bağlı Wi-Fi bağlantısı 8766 portunda sabitlenmiş sertifika ve eşleştirilmiş anahtarla HTTPS kullanır. Ayarlar ve eşleştirme uç noktaları yerel kalır. PhoneBox kendi telemetri, analiz veya hesap sistemine sahip değildir. Ayrıntılar için [gizlilik politikasına](PRIVACY.md) ve [SECURITY.md](SECURITY.md) dosyasına bakın.
 
 ## Geliştirme
 
@@ -165,7 +165,7 @@ python tools/demo-server.py
 - **Windows ajanı:** SignPath Foundation başvurusu beklemededir; onaylanana kadar sürümler imzasızdır.
 - **Android uygulaması:** Sürüm APK'ları SignPath'ten bağımsız olarak projenin kendi imzalama anahtarını kullanır.
 - **Ekip rolleri:** Commit, inceleme ve imzalama onaylayıcısı: [ersinkoc](https://github.com/ersinkoc).
-- **Gizlilik:** Bkz. [gizlilik politikası](../PRIVACY.md).
+- **Gizlilik:** Bkz. [gizlilik politikası](PRIVACY.md).
 
 ## Sponsor
 
@@ -195,4 +195,4 @@ python tools/demo-server.py
 
 ## Lisans
 
-[MIT](../LICENSE)
+[MIT](LICENSE)

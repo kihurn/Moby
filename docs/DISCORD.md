@@ -130,7 +130,7 @@ The login asks for these Discord permissions, all of them on your own account an
 `rpc`, `rpc.voice.read`, `rpc.voice.write` and `rpc.notifications.read`, plus `rpc.screenshare.read` and
 `rpc.screenshare.write` only while screen share is on, and `messages.read` only while the chat is on. Changing the
 requested permissions makes Discord ask you to approve PhoneBox again. The client secret stays on the computer and is
-never sent to the phone. See the Discord row in [PRIVACY.md](../PRIVACY.md) for the connections involved.
+never sent to the phone. See the Discord row in [PRIVACY.md](PRIVACY.md) for the connections involved.
 
 ## Troubleshooting
 

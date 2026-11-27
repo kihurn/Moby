@@ -211,18 +211,18 @@ jobs:
           test "$(find . -maxdepth 1 -type f -name '*.apk' | wc -l)" -eq 1
           sha256sum * > "SHA256SUMS-${{ needs.version.outputs.version }}.txt"
           cat "SHA256SUMS-${{ needs.version.outputs.version }}.txt"
-      - name: Release notes from CHANGELOG.md
+      - name: Release notes from docs/CHANGELOG.md
         run: |
           v="${{ needs.version.outputs.version }}"
           # the section for this version, else the "Unreleased" one
-          section() { awk -v v="$1" '/^## /{ if (on) exit; on = ($2 == v); next } on' CHANGELOG.md; }
+          section() { awk -v v="$1" '/^## /{ if (on) exit; on = ($2 == v); next } on' docs/CHANGELOG.md; }
           section "$v" > notes.md
           [ -s notes.md ] || section Unreleased > notes.md
           [ -s notes.md ] || echo "PhoneBox $v" > notes.md
           cat >> notes.md <<'EOF'
 
           ---
-          [Code signing policy](https://github.com/ersinkoc/phonebox#code-signing-policy) · [Privacy policy](https://github.com/ersinkoc/phonebox/blob/main/PRIVACY.md)
+          [Code signing policy](https://github.com/ersinkoc/phonebox#code-signing-policy) · [Privacy policy](https://github.com/kihurn/Moby/blob/main/docs/PRIVACY.md)
           EOF
       - name: Create the release
         env:

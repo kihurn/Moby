@@ -30,7 +30,7 @@ flowchart LR
 
 ## Development
 
-Contributions are welcome: read [CONTRIBUTING.md](../CONTRIBUTING.md) first (scope, the security model, privacy and tests).
+Contributions are welcome: read [CONTRIBUTING.md](CONTRIBUTING.md) first (scope, the security model, privacy and tests).
 
 Use the .NET 10 SDK for the agent, JDK 17 and Android SDK Platform 35 for Android builds, and Python 3 plus
 Node.js 22 for the browser tooling. The Gradle wrapper downloads Gradle automatically.

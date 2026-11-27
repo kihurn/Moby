@@ -1,7 +1,7 @@
 # Releasing PhoneBox
 
 1. Update `agent/PhoneBox.Agent/PhoneBox.Agent.csproj`, Android `versionName` and its increasing `versionCode`.
-2. Add dated release notes to `CHANGELOG.md`; update README and demo catalog counts when widgets/templates change.
+2. Add dated release notes to `docs/CHANGELOG.md`; update README and demo catalog counts when widgets/templates change.
 3. Run `python tools/check-release.py`, `./gradlew lintDebug assembleDebug` in `android`, the agent tests, `npm test` in `tools/ui-tests`, and
    `pwsh tools/test-install-apk.ps1` on Windows. Build and verify the release-signed APK.
 4. Commit the reviewed scope, push `main`, and wait for the build and Pages workflows to pass.

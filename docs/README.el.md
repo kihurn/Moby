@@ -43,7 +43,7 @@ Windows, Linux και macOS. Χωρίς root, λογαριασμό PhoneBox ή �
   <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Τελευταία έκδοση"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Άδεια MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Άδεια MIT"></a>
 </p>
 
 <p align="center"><img src="hero-0.6.png" width="900" alt="Το PhoneBox σε τρία τηλέφωνα που δείχνουν σελίδες αυτοματισμών, αρχικής και προγραμματισμού"><br>
@@ -167,8 +167,8 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 | [Control Deck](CONTROL-DECK.md) | Ήχος, πολυμέσα, OBS, συντομεύσεις, εργασίες, πρωτόκολλα, εξαρτήσεις και περιορισμοί πλατφόρμας |
 | [Widget Discord](DISCORD.md) | Δημιουργία της εφαρμογής Discord, σύνδεση, χειριστήρια και αντιμετώπιση προβλημάτων |
 | [Ανάπτυξη](DEVELOPMENT.md) | Αρχιτεκτονική, τοπικό demo, builds, δοκιμές, πηγές widgets και απομονωμένες εκτελέσεις του πράκτορα |
-| [Συνεισφορά](../CONTRIBUTING.md) | Πεδίο συνεισφορών, προσδοκίες review, απόρρητο και απαραίτητοι έλεγχοι |
-| [Αρχείο αλλαγών](../CHANGELOG.md) | Ιστορικό εκδόσεων και αλλαγές που δεν έχουν κυκλοφορήσει ακόμη |
+| [Συνεισφορά](CONTRIBUTING.md) | Πεδίο συνεισφορών, προσδοκίες review, απόρρητο και απαραίτητοι έλεγχοι |
+| [Αρχείο αλλαγών](CHANGELOG.md) | Ιστορικό εκδόσεων και αλλαγές που δεν έχουν κυκλοφορήσει ακόμη |
 | [Λίστα ελέγχου έκδοσης](RELEASING.md) | Διαδικασία build, υπογραφής και δημοσίευσης για τους συντηρητές |
 
 Τα [extras για το UMIDIGI BISON](../extras/umidigi-bison) περιέχουν την αναστρέψιμη βελτιστοποίηση χωρίς root που χρησιμοποιήθηκε στο αρχικό τηλέφωνο ανάπτυξης.
@@ -182,8 +182,8 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 Το PhoneBox δεν έχει δική του τηλεμετρία, analytics ή λογαριασμούς. Τα προαιρετικά widgets και οι ενσωματώσεις επικοινωνούν με εξωτερικές
 υπηρεσίες για καιρό, όρια χρήσης, GitHub και άλλα δεδομένα, και ο πράκτορας ελέγχει το GitHub για ενημερώσεις.
 Οι υποστηριζόμενες δημόσιες ροές μπορούν να περνούν μέσω του πράκτορα, μέσω USB, όταν το τηλέφωνο δεν έχει διαδίκτυο.
-Η [πολιτική απορρήτου](../PRIVACY.md) απαριθμεί τις εξερχόμενες συνδέσεις και τον τρόπο απενεργοποίησής τους.
-Διαβάστε τις [λεπτομέρειες ασφαλείας](GUIDE.md#security--privacy). Για να αναφέρετε μια ευπάθεια, ακολουθήστε το [SECURITY.md](../SECURITY.md).
+Η [πολιτική απορρήτου](PRIVACY.md) απαριθμεί τις εξερχόμενες συνδέσεις και τον τρόπο απενεργοποίησής τους.
+Διαβάστε τις [λεπτομέρειες ασφαλείας](GUIDE.md#security--privacy). Για να αναφέρετε μια ευπάθεια, ακολουθήστε το [SECURITY.md](SECURITY.md).
 
 ## Ανάπτυξη
 
@@ -198,7 +198,7 @@ python tools/demo-server.py
 
 Ανοίξτε <http://127.0.0.1:8790/panel/> ή <http://127.0.0.1:8790/settings/>.
 Δείτε τις [εντολές ανάπτυξης](DEVELOPMENT.md#development) για την εκτέλεση του πράκτορα, το build του APK και τη δοκιμή των αλλαγών.
-Οι συνεισφορές είναι ευπρόσδεκτες· ξεκινήστε από το [CONTRIBUTING.md](../CONTRIBUTING.md).
+Οι συνεισφορές είναι ευπρόσδεκτες· ξεκινήστε από το [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Πολιτική υπογραφής κώδικα
 
@@ -212,7 +212,7 @@ python tools/demo-server.py
 - **Εφαρμογή Android:** τα APK των εκδόσεων χρησιμοποιούν το δικό τους κλειδί υπογραφής του έργου, ανεξάρτητα από το SignPath.
 - **Ρόλοι ομάδας:** committer, reviewer και εγκρίνων υπογραφής: [ersinkoc](https://github.com/ersinkoc).
   Τα pull requests από άλλους συνεισφέροντες ελέγχονται πριν από τη συγχώνευση.
-- **Απόρρητο:** δείτε την [πολιτική απορρήτου](../PRIVACY.md).
+- **Απόρρητο:** δείτε την [πολιτική απορρήτου](PRIVACY.md).
 
 ## Ευχαριστίες
 
@@ -248,4 +248,4 @@ python tools/demo-server.py
 
 ## Άδεια χρήσης
 
-[MIT](../LICENSE)
+[MIT](LICENSE)

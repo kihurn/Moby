@@ -87,9 +87,9 @@ PhoneBox menghubungkan ponsel dan komputer secara langsung. Anda tidak memerluka
 - [Tema, fonta dan pratinjau](APPEARANCE.md)
 - [panduan Control Deck](CONTROL-DECK.md)
 - [Pengembangan dan uji coba](DEVELOPMENT.md)
-- [Kebijakan Privasi](../PRIVACY.md)
-- [Changelog](../CHANGELOG.md)
+- [Kebijakan Privasi](PRIVACY.md)
+- [Changelog](CHANGELOG.md)
 
 ## Lisensi
 
-[PhoneBox dirilis di bawah MIT License.](../LICENSE)
+[PhoneBox dirilis di bawah MIT License.](LICENSE)

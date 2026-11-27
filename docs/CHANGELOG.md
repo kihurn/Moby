@@ -311,7 +311,7 @@ shortcut macros, long-press and cycling keys, and the trackpad, On air and camer
   game, and a short feed of friends coming online, starting a game or going offline. They need a Steam Web API key,
   which stays on the computer: the agent asks Steam, about once a minute and only while one of the widgets is on an
   enabled page, and the phone never contacts Steam. The activity feed lives in memory only. See
-  [docs/STEAM.md](docs/STEAM.md) (#244, [Sawaid-hub](https://github.com/Sawaid-hub)).
+  [docs/STEAM.md](STEAM.md) (#244, [Sawaid-hub](https://github.com/Sawaid-hub)).
 - Pomodoro: an optional sound when a step ends, off by default and silent on the night screen, at a share of the
   phone's media volume (#305, [abdulah-x](https://github.com/abdulah-x)).
 - Trackpad on macOS: the widget now moves the pointer, clicks and scrolls on a Mac, and three- and four-finger swipes,
@@ -331,7 +331,7 @@ shortcut macros, long-press and cycling keys, and the trackpad, On air and camer
   titles, and OpenCode inside WSL. WSL is looked at only for distributions that are already running, at most once a
   minute, so a stopped distribution is never started. The service's password stays on the computer (#319,
   [Haruki1707](https://github.com/Haruki1707)).
-- Copilot CLI status on the panel: a guide and a small bridge script ([docs/COPILOT-CLI.md](docs/COPILOT-CLI.md))
+- Copilot CLI status on the panel: a guide and a small bridge script ([docs/COPILOT-CLI.md](COPILOT-CLI.md))
   send whether a GitHub Copilot CLI session is working, has finished its turn or needs attention through the webhook
   API, also from WSL2. Only the state is sent, never prompts, paths or output (#331, #317,
   [quasimagia](https://github.com/quasimagia)).
@@ -820,7 +820,7 @@ some 40 fixes from an outside review: calendars, pushed values, settings, setup 
 **Panel**
 - **Discord** widget: the voice channel you are in, mute, deafen, leave and join, the voice channels of your servers
   and your Discord notifications. It talks to the Discord app on the computer, needs your own Discord application
-  (see [docs/DISCORD.md](docs/DISCORD.md)), is off by default, and the controls and notifications are each a widget
+  (see [docs/DISCORD.md](DISCORD.md)), is off by default, and the controls and notifications are each a widget
   option (#112, [bhuwan1321](https://github.com/bhuwan1321)).
 - The panel works on phones whose system WebView is stuck on Chromium 83 (it stayed black), and the permission prompt
   shows there too. An approval that arrives while the live stream reconnects is no longer lost, an answer that
@@ -932,7 +932,7 @@ Most of the fixes come from an evidence-led audit. Each one was reproduced on th
 - By default PhoneBox follows the language of the phone (panel) or the browser (settings).
 - To choose a language yourself: Settings › General › Display › Language (`display.language`).
 - The README is restructured around a short quick start, with translations in `docs/README.<language>.md`.
-- New guides: [setup](docs/SETUP.md), [user guide](docs/GUIDE.md), [development](docs/DEVELOPMENT.md).
+- New guides: [setup](SETUP.md), [user guide](GUIDE.md), [development](DEVELOPMENT.md).
 
 **Agent**
 - **Updates:**

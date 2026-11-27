@@ -87,9 +87,9 @@ PhoneBox はスマートフォンとパソコンを直接接続します。Phone
 - [テーマ、フォント、プレビュー](APPEARANCE.md)
 - [Control Deck ガイド](CONTROL-DECK.md)
 - [開発・テスト](DEVELOPMENT.md)
-- [プライバシーポリシー](../PRIVACY.md)
-- [変更履歴](../CHANGELOG.md)
+- [プライバシーポリシー](PRIVACY.md)
+- [変更履歴](CHANGELOG.md)
 
 ## ライセンス
 
-[PhoneBox は MIT ライセンスで公開されています。](../LICENSE)
+[PhoneBox は MIT ライセンスで公開されています。](LICENSE)

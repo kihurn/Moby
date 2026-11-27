@@ -43,7 +43,7 @@ Windows, Linux y macOS. Sin root, sin cuenta de PhoneBox ni servicio en la nube.
   <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="Última versión"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Licencia MIT"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="Licencia MIT"></a>
 </p>
 
 <p align="center"><img src="hero-0.6.png" width="900" alt="PhoneBox en tres teléfonos"><br>
@@ -98,8 +98,8 @@ Abre <http://127.0.0.1:8765>, elige una plantilla en **Páginas**, organiza tus 
 | [Apariencia](APPEARANCE.md) | Fuentes, superficies, preajustes y vista previa |
 | [Control Deck](CONTROL-DECK.md) | Audio, multimedia, OBS, atajos y tareas |
 | [Desarrollo](DEVELOPMENT.md) | Arquitectura, demo local, compilación y pruebas |
-| [Privacidad](../PRIVACY.md) | Conexiones salientes y seguridad |
+| [Privacidad](PRIVACY.md) | Conexiones salientes y seguridad |
 
 ## Licencia
 
-[MIT](../LICENSE)
+[MIT](LICENSE)

@@ -85,7 +85,7 @@ Widgets scale to the size you give them. Weather, air quality, rates, crypto and
 public APIs ([Open-Meteo](https://open-meteo.com), [Frankfurter](https://frankfurter.dev), [CoinGecko](https://www.coingecko.com),
 [HN](https://github.com/HackerNews/API)) on the phone, without API keys, and keep their last data when offline.
 If the phone has no internet, these five supported HTTPS feeds can fall back through the agent over USB.
-The feed proxy is not available over Wi-Fi. See [PRIVACY.md](../PRIVACY.md) for the services contacted.
+The feed proxy is not available over Wi-Fi. See [PRIVACY.md](PRIVACY.md) for the services contacted.
 
 **Camera** shows an IP camera that streams over RTSP. Add it in **Settings › General › Cameras** with a name and its
 RTSP address (`rtsp://user:password@192.168.1.20:554/…`; the camera's manual or app has the exact path), then pick it
@@ -448,6 +448,6 @@ switchable ports). The panel keeps running over Wi-Fi while the USB power is off
   command. Only measured quota fields reach the panel; CLI conversation identifiers and token counters are omitted.
   PhoneBox does not manage Google OAuth credentials; the CLI uses its own authentication. CLI auto-updates are
   disabled for these probes.
-- **No telemetry**: no accounts, no analytics, no crash reports. The [privacy policy](../PRIVACY.md) lists every
+- **No telemetry**: no accounts, no analytics, no crash reports. The [privacy policy](PRIVACY.md) lists every
   connection the agent and the app make (update check, weather, the widgets that use public APIs) and how to turn
   each one off.

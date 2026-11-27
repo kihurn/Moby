@@ -87,9 +87,9 @@ PhoneBox फ़ोन और कंप्यूटर को सीधे जो
 - [प्रसंग, फ़ॉन्ट तथा पूर्वावलोकन](APPEARANCE.md)
 - [Control Deck मार्गदर्शक](CONTROL-DECK.md)
 - [विकास तथा परीक्षण](DEVELOPMENT.md)
-- [गोपनीयता नीति](../PRIVACY.md)
-- [चेंज लॉग](../CHANGELOG.md)
+- [गोपनीयता नीति](PRIVACY.md)
+- [चेंज लॉग](CHANGELOG.md)
 
 ## लाइसेंस
 
-[PhoneBox MIT लाइसेंस के तहत जारी किया गया है।](../LICENSE)
+[PhoneBox MIT लाइसेंस के तहत जारी किया गया है।](LICENSE)

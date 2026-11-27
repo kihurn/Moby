@@ -87,9 +87,9 @@ PhoneBox 會直接連接手機與電腦。無須註冊帳號，也不會傳送�
 - [主題、字體和預覽](APPEARANCE.md)
 - [Control Deck 指南](CONTROL-DECK.md)
 - [開發和測試](DEVELOPMENT.md)
-- [隱私政策](../PRIVACY.md)
-- [變更日誌](../CHANGELOG.md)
+- [隱私政策](PRIVACY.md)
+- [變更日誌](CHANGELOG.md)
 
 ## 授權
 
-[PhoneBox 是以MIT授權條款發佈的](../LICENSE)
+[PhoneBox 是以MIT授權條款發佈的](LICENSE)

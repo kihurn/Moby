@@ -43,7 +43,7 @@
   <a href="https://github.com/ersinkoc/phonebox/releases/latest"><img src="https://img.shields.io/github/v/release/ersinkoc/phonebox?label=release" alt="最新版本"></a>
   <img src="https://img.shields.io/badge/Windows%20%C2%B7%20Linux%20%C2%B7%20macOS-.NET%2010-512bd4" alt="Windows, Linux, macOS; .NET 10">
   <img src="https://img.shields.io/badge/Android-5%2B-3ddc84" alt="Android 5+">
-  <a href="../LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT 许可证"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT 许可证"></a>
 </p>
 
 <p align="center"><img src="hero-0.6.png" width="900" alt="三部手机上的 PhoneBox 示例"><br>
@@ -98,8 +98,8 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 | [外观](APPEARANCE.md) | 字体、表面样式、预设与实时预览 |
 | [Control Deck](CONTROL-DECK.md) | 音频、媒体、OBS、快捷键与任务 |
 | [开发指南](DEVELOPMENT.md) | 架构、本地演示服务器、构建与测试 |
-| [隐私政策](../PRIVACY.md) | 外部连接说明与安全性 |
+| [隐私政策](PRIVACY.md) | 外部连接说明与安全性 |
 
 ## 许可证
 
-[MIT](../LICENSE)
+[MIT](LICENSE)

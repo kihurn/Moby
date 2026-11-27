@@ -87,9 +87,9 @@ O PhoneBox conecta o celular e o computador diretamente. Ele dispensa conta e n�
 - [Temas, fontes e visualização](APPEARANCE.md)
 - [Guia de Control Deck](CONTROL-DECK.md)
 - [Desenvolvimento e testes](DEVELOPMENT.md)
-- [Política de privacidade](../PRIVACY.md)
-- [Changelog](../CHANGELOG.md)
+- [Política de privacidade](PRIVACY.md)
+- [Changelog](CHANGELOG.md)
 
 ## Licença
 
-[PhoneBox é lançado sob a licença MIT.](../LICENSE)
+[PhoneBox é lançado sob a licença MIT.](LICENSE)

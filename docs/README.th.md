@@ -87,9 +87,9 @@ PhoneBox เชื่อมโทรศัพท์กับคอมพิว�
 - [ชุดตกแต่ง, แบบอักษร และตัวอย่าง](APPEARANCE.md)
 - [คำแนะนำ Control Deck](CONTROL-DECK.md)
 - [การพัฒนาและทดสอบ](DEVELOPMENT.md)
-- [นโยบายความเป็นส่วนตัว](../PRIVACY.md)
-- [รายการเปลี่ยนแปลง](../CHANGELOG.md)
+- [นโยบายความเป็นส่วนตัว](PRIVACY.md)
+- [รายการเปลี่ยนแปลง](CHANGELOG.md)
 
 ## ใบอนุญาต
 
-[PhoneBox ถูกปล่อยออกมาภายใต้ MIT License](../LICENSE)
+[PhoneBox ถูกปล่อยออกมาภายใต้ MIT License](LICENSE)

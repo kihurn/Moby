@@ -87,9 +87,9 @@ curl -fsSL https://raw.githubusercontent.com/ersinkoc/phonebox/main/setup.sh | b
 - [المواضيع والخطوط والتبصير](APPEARANCE.md)
 - [Control Deck دليل](CONTROL-DECK.md)
 - [التطوير والاختبار](DEVELOPMENT.md)
-- [سياسة الخصوصية](../PRIVACY.md)
-- [سجل التغييرات](../CHANGELOG.md)
+- [سياسة الخصوصية](PRIVACY.md)
+- [سجل التغييرات](CHANGELOG.md)
 
 ## الترخيص
 
-[يُوزّع PhoneBox بموجب ترخيص MIT.](../LICENSE)
+[يُوزّع PhoneBox بموجب ترخيص MIT.](LICENSE)

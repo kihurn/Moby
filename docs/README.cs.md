@@ -87,9 +87,9 @@ PhoneBox propojuje telefon a počítač přímo. Nevyžaduje účet a neodesíl�
 - [Motivy, písma a náhled](APPEARANCE.md)
 - [Průvodce Control Deck](CONTROL-DECK.md)
 - [Vývoj a testy](DEVELOPMENT.md)
-- [Ochrana osobních údajů |](../PRIVACY.md)
-- [Changelog](../CHANGELOG.md)
+- [Ochrana osobních údajů |](PRIVACY.md)
+- [Changelog](CHANGELOG.md)
 
 ## Licence
 
-[PhoneBox je vydán pod licencí MIT.](../LICENSE)
+[PhoneBox je vydán pod licencí MIT.](LICENSE)

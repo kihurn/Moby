@@ -6,7 +6,7 @@ assert re.fullmatch(r'\d+\.\d+\.\d+',version),version
 gradle=(root/'android/app/build.gradle.kts').read_text()
 assert re.search(r'versionName = "'+re.escape(version)+'"',gradle),'Android version differs'
 assert int(re.search(r'versionCode = (\d+)',gradle)[1])>0
-changelog=(root/'CHANGELOG.md').read_text(encoding='utf-8')
+changelog=(root/'docs/CHANGELOG.md').read_text(encoding='utf-8')
 assert re.search(r'^## '+re.escape(version)+r' — \d{4}-\d{2}-\d{2}$',changelog,re.M),'Missing dated release notes'
 widgets=json.loads((root/'agent/PhoneBox.Agent/widgets.json').read_text(encoding='utf-8'))
 templates=json.loads((root/'agent/PhoneBox.Agent/templates.json').read_text(encoding='utf-8'))

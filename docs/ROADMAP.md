@@ -2,7 +2,7 @@
 
 What is planned or waiting, in one place. Issues are closed once they have an answer, so this file is where the
 open work lives; each item links the issue or pull request it came from. Closed issues stay readable, and the
-people who proposed or prototyped something are credited in the [changelog](../CHANGELOG.md) when it ships.
+people who proposed or prototyped something are credited in the [changelog](CHANGELOG.md) when it ships.
 
 ## Being built in-house
 
@@ -118,4 +118,4 @@ Agreed in principle, not being built in-house. Say so on the issue before starti
 ## How to help
 
 Comment on the linked issue (a closed issue can be reopened) or open a draft pull request. For a larger feature,
-please say so before building it, so two people don't build the same thing. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+please say so before building it, so two people don't build the same thing. See [CONTRIBUTING.md](CONTRIBUTING.md).
