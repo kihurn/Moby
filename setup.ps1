@@ -527,7 +527,7 @@ function Install-PhoneBox {
         Write-Info 'Wi-Fi only: install the app from the release page on the phone, then on the computer open'
         Write-Info 'Settings > General > Wi-Fi & Tailscale > Pair a phone over Wi-Fi and scan the QR code.'
         Write-Info 'When you turn Wi-Fi on, Windows asks to let PhoneBox through the firewall: allow Private networks only.'
-        Write-Info "Until then PhoneBox only listens on this computer. Every connection it makes: https://github.com/$Repo/blob/main/docs/PRIVACY.md"
+        Write-Info "Until then PhoneBox only listens on this computer."
         Write-Info 'Updates: PhoneBox updates itself from Settings. Run setup again any time to repair it.'
         Write-Info "Uninstall: & ([scriptblock]::Create((irm https://raw.githubusercontent.com/$Repo/main/scripts/uninstall.ps1))) [-Purge] [-Apk]"
     } finally {

@@ -641,7 +641,7 @@ main() {
   info 'Wi-Fi only: install the app from the release page on the phone, then on the computer open'
   info 'Settings > General > Wi-Fi & Tailscale > Pair a phone over Wi-Fi and scan the QR code.'
   if [ "$os" = linux ]; then info 'With a firewall (ufw, firewalld), Wi-Fi also needs TCP port 8766 open on your local network.'; fi
-  info "Until Wi-Fi is on, PhoneBox only listens on this computer. Every connection it makes: https://github.com/$repo/blob/main/docs/PRIVACY.md"
+  info "Until Wi-Fi is on, PhoneBox only listens on this computer."
   info 'Updates: PhoneBox updates itself from Settings. Run setup again any time to repair it.'
   info "Uninstall: curl -fsSL https://raw.githubusercontent.com/$repo/main/scripts/uninstall.sh | bash -s -- [--purge] [--apk]"
 }

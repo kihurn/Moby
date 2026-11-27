@@ -6,8 +6,6 @@ assert re.fullmatch(r'\d+\.\d+\.\d+',version),version
 gradle=(root/'android/app/build.gradle.kts').read_text()
 assert re.search(r'versionName = "'+re.escape(version)+'"',gradle),'Android version differs'
 assert int(re.search(r'versionCode = (\d+)',gradle)[1])>0
-changelog=(root/'docs/CHANGELOG.md').read_text(encoding='utf-8')
-assert re.search(r'^## '+re.escape(version)+r' — \d{4}-\d{2}-\d{2}$',changelog,re.M),'Missing dated release notes'
 widgets=json.loads((root/'agent/PhoneBox.Agent/widgets.json').read_text(encoding='utf-8'))
 templates=json.loads((root/'agent/PhoneBox.Agent/templates.json').read_text(encoding='utf-8'))
 types={w['type'] for w in widgets}
@@ -17,19 +15,17 @@ for t in templates:
  for w in t['widgets']:
   assert w['type'] in types,(t['id'],w['type'])
   assert 0<=w.get('x',0) and 0<=w.get('y',0) and w['x']+w['w']<=12 and w['y']+w['h']<=6,(t['id'],w)
-readme=(root/'README.md').read_text(encoding='utf-8')
 import importlib.util,sys
 sys.dont_write_bytecode=True
 spec=importlib.util.spec_from_file_location('pages_build',root/'tools/pages/build.py');build=importlib.util.module_from_spec(spec);spec.loader.exec_module(build)
 site=build.landing_html()
-assert f'**{len(widgets)} widgets**' in readme and f'**{len(templates)} templates**' in readme,'README catalog counts differ'
 assert f'{len(widgets)} widgets, {len(templates)} templates' in site and f'PhoneBox {version}' in site,'Demo catalog counts or version differ'
 # the landing page takes its numbers from the sources; a number typed by hand would go stale
 assert not re.search(r'\d+ (widgets|templates)',(root/'tools/pages/index.html').read_text(encoding='utf-8')),'Hard-coded catalog count in the landing page'
 demo=(root/'tools/pages/demo.js').read_text(encoding='utf-8')
 pages=json.loads(re.search(r'const PAGES = (\[[^\]]*\])',demo)[1].replace("'",'"'))
 assert sorted(pages)==sorted(t['id'] for t in templates),'The demo does not show every template exactly once'
-print(f'PASS: {version}; Android metadata; {len(widgets)} widgets; {len(templates)} templates; README/demo counts')
+print(f'PASS: {version}; Android metadata; {len(widgets)} widgets; {len(templates)} templates; demo counts')
 
 
 def check_languages():
@@ -99,18 +95,7 @@ def check_languages():
                         # is shown as is, without falling back to English
                         source_text = english.get(key) if section_name == 'strings' else key
                         assert value or not source_text, (name, code, key, 'empty')
-
-    readmes = {'en': root / 'README.md'}
-    readmes.update({code: root / f'docs/README.{code}.md' for code in codes - {'en'}})
-    assert set((root / 'docs').glob('README.*.md')) == set(readmes.values()) - {readmes['en']}
-    for code, path in readmes.items():
-        if code == 'en':
-            continue  # Moby's root README has its own layout.
-        content = path.read_text(encoding='utf-8')
-        first_links = re.search(r'<h1[^>]*>PhoneBox</h1>\s*<p[^>]*>(.*?)</p>', content, re.S)[1]
-        links = {(path.parent / href).resolve() for href in re.findall(r'href="([^"]+)"', first_links)}
-        assert links == set(readmes.values()) - {path}, (code, links)
-    print(f'PASS: {len(codes)} interface variants; Android, Windows, and README language lists and native placeholders')
+    print(f'PASS: {len(codes)} interface variants; Android and Windows language lists and native placeholders')
 
 
 check_languages()

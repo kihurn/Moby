@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 GitHub Copilot CLI -> PhoneBox: shows whether a Copilot CLI session is working, has finished its turn or needs your
-attention, through the webhook API. Copilot CLI runs it from its hooks; see docs/COPILOT-CLI.md.
+attention, through the webhook API. Copilot CLI runs it from its hooks.
 
     copilot-cli-bridge.py working|finished|attention [--notify] [--check]
 

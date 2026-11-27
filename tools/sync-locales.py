@@ -28,12 +28,6 @@ def main():
     if not languages or next(iter(languages)) != 'en':
         raise SystemExit('The first language in i18n.js must be English')
 
-    readmes = {'en': ROOT / 'README.md'}
-    readmes.update({code: ROOT / f'docs/README.{code}.md' for code in languages if code != 'en'})
-    missing = [str(path.relative_to(ROOT)) for path in readmes.values() if not path.is_file()]
-    if missing:
-        raise SystemExit('Add these README files first: ' + ', '.join(missing))
-
     csharp_codes = ', '.join(f'"{code}"' for code in ['auto', *languages])
     replace(AGENT / 'Config.cs', r'Languages = \[[^\]]+\];', f'Languages = [{csharp_codes}];')
     cultures = ['zh-Hans' if code == 'zh' else code for code in languages]
@@ -47,23 +41,6 @@ def main():
     ET.indent(xml, space='    ')
     write(ANDROID / 'res/xml/locales_config.xml',
           '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(xml, encoding='unicode') + '\n')
-
-    for current, path in readmes.items():
-        links = []
-        for code, name in languages.items():
-            if code == current:
-                links.append(f'<b>{name}</b>')
-                continue
-            if current == 'en':
-                href = readmes[code].relative_to(ROOT).as_posix()
-            elif code == 'en':
-                href = '../README.md'
-            else:
-                href = readmes[code].name
-            links.append(f'<a href="{href}">{name}</a>')
-        picker = '<p align="center">\n  ' + ' ·\n  '.join(links) + '\n</p>'
-        replace(path, r'(<h1[^>]*>PhoneBox</h1>\s*)<p align="center">[\s\S]*?</p>',
-                lambda match: match[1] + picker)
     print(f'Synced {len(languages)} locale entries')
 
 
