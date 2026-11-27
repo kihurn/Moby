@@ -1,0 +1,102 @@
+diff --git a/server/src/main/java/com/genymobile/scrcpy/Options.java b/server/src/main/java/com/genymobile/scrcpy/Options.java
+index 26a6ba9..0b345f4 100644
+--- a/server/src/main/java/com/genymobile/scrcpy/Options.java
++++ b/server/src/main/java/com/genymobile/scrcpy/Options.java
+@@ -47,6 +47,7 @@ public class Options {
+     private CameraAspectRatio cameraAspectRatio;
+     private float cameraZoom = 1;
+     private int cameraFps;
++    private float cameraExposureEv;
+     private boolean cameraHighSpeed;
+     private boolean cameraTorch;
+     private boolean showTouches;
+@@ -187,6 +188,10 @@ public class Options {
+         return cameraFps;
+     }
+ 
++    public float getCameraExposureEv() {
++        return cameraExposureEv;
++    }
++
+     public boolean getCameraHighSpeed() {
+         return cameraHighSpeed;
+     }
+@@ -515,6 +520,9 @@ public class Options {
+                 case "camera_fps":
+                     options.cameraFps = Integer.parseInt(value);
+                     break;
++                case "camera_exposure_ev":
++                    options.cameraExposureEv = Float.parseFloat(value);
++                    break;
+                 case "camera_high_speed":
+                     options.cameraHighSpeed = Boolean.parseBoolean(value);
+                     break;
+diff --git a/server/src/main/java/com/genymobile/scrcpy/video/CameraCapture.java b/server/src/main/java/com/genymobile/scrcpy/video/CameraCapture.java
+index 1aaeafa..6dab520 100644
+--- a/server/src/main/java/com/genymobile/scrcpy/video/CameraCapture.java
++++ b/server/src/main/java/com/genymobile/scrcpy/video/CameraCapture.java
+@@ -32,6 +32,7 @@ import android.media.MediaCodec;
+ import android.os.Handler;
+ import android.os.HandlerThread;
+ import android.util.Range;
++import android.util.Rational;
+ import android.view.Surface;
+ 
+ import java.io.IOException;
+@@ -61,6 +62,7 @@ public class CameraCapture extends SurfaceCapture {
+     private final Size explicitSize;
+     private final CameraAspectRatio aspectRatio;
+     private final int fps;
++    private final float exposureEv;
+     private final boolean highSpeed;
+     private final Rect crop;
+     private final Orientation captureOrientation;
+@@ -96,6 +98,7 @@ public class CameraCapture extends SurfaceCapture {
+         this.explicitSize = options.getCameraSize();
+         this.aspectRatio = options.getCameraAspectRatio();
+         this.fps = options.getCameraFps();
++        this.exposureEv = options.getCameraExposureEv();
+         this.highSpeed = options.getCameraHighSpeed();
+         this.crop = options.getCrop();
+         this.captureOrientation = options.getCaptureOrientation();
+@@ -303,8 +306,9 @@ public class CameraCapture extends SurfaceCapture {
+                 }
+ 
+                 CameraManager cameraManager = ServiceManager.getCameraManager();
++                CameraCharacteristics characteristics = null;
+                 try {
+-                    CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
++                    characteristics = cameraManager.getCameraCharacteristics(cameraId);
+                     zoomRange = characteristics.get(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE);
+                 } catch (CameraAccessException e) {
+                     Ln.w("Could not get camera characteristics");
+@@ -317,6 +321,7 @@ public class CameraCapture extends SurfaceCapture {
+                     if (fps > 0) {
+                         requestBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range<>(fps, fps));
+                     }
++                    applyExposureCompensation(characteristics);
+                     if (initialTorch) {
+                         Ln.i("Turn camera torch on");
+                         requestBuilder.set(CaptureRequest.FLASH_MODE, CaptureRequest.FLASH_MODE_TORCH);
+@@ -353,6 +358,21 @@ public class CameraCapture extends SurfaceCapture {
+         }
+     }
+ 
++    private void applyExposureCompensation(CameraCharacteristics characteristics) {
++        if (exposureEv == 0 || !Float.isFinite(exposureEv) || characteristics == null) {
++            return;
++        }
++        Range<Integer> range = characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE);
++        Rational step = characteristics.get(CameraCharacteristics.CONTROL_AE_COMPENSATION_STEP);
++        if (range == null || step == null || step.floatValue() <= 0 || range.getLower().equals(range.getUpper())) {
++            Ln.w("This camera does not support exposure compensation");
++            return;
++        }
++        int index = range.clamp(Math.round(exposureEv / step.floatValue()));
++        requestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, index);
++        Ln.i("Camera exposure compensation: " + index + " steps (" + (index * step.floatValue()) + " EV)");
++    }
++
+     @Override
+     public void stop() {
+         cameraHandler.post(() -> {

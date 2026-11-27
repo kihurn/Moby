@@ -1,0 +1,57 @@
+diff --git a/src-tauri/src/scrcpy/server.rs b/src-tauri/src/scrcpy/server.rs
+index f750d86..d7ec806 100644
+--- a/src-tauri/src/scrcpy/server.rs
++++ b/src-tauri/src/scrcpy/server.rs
+@@ -18,7 +18,7 @@ use crate::resources;
+ /// The server refuses to run for any other client version. Bump only together with a
+ /// protocol review (docs/SPEC.md 1.4).
+ pub const SERVER_VERSION: &str = "4.1";
+-pub const SERVER_SHA256: &str = "deacb991ed2509715160ffdc7907e47b4160eb30d1566217e9047fd5b8850cae";
++pub const SERVER_SHA256: &str = env!("MOBY_EXPOSURE_SERVER_SHA256");
+ 
+ const DEVICE_SERVER_PATH: &str = "/data/local/tmp/plugcam-server.jar";
+ const DEVICE_LIST_PATH: &str = "/data/local/tmp/plugcam-list.jar";
+@@ -26,7 +26,6 @@ const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+ const LIST_TIMEOUT: Duration = Duration::from_secs(30);
+ /// A server left over from a crashed session keeps the camera busy for a moment after it is
+ /// killed ("Too many other clients connecting"), see docs/stage0.md.
+-const STALE_SERVER_GRACE: Duration = Duration::from_secs(3);
+ const LOG_LINES_KEPT: usize = 20;
+ 
+ #[derive(Debug, thiserror::Error)]
+@@ -242,7 +241,7 @@ pub fn server_file() -> Result<PathBuf, ServerError> {
+ 
+ /// Pushes and starts the server, then connects the video and control sockets.
+ pub fn start(adb: &Adb, serial: &str, server: &Path, params: &CameraParams) -> Result<Session, ServerError> {
+-    kill_stale_servers(adb, serial);
++    // Other scrcpy sessions can be carrying Moby's independent microphone.
+     adb.push(serial, server, DEVICE_SERVER_PATH)?;
+ 
+     let scid = random_scid();
+@@ -261,6 +260,11 @@ pub fn start(adb: &Adb, serial: &str, server: &Path, params: &CameraParams) -> R
+     };
+ 
+     let mut extra = params.server_args();
++    if let Some(ev) = std::env::var("MOBY_CAMERA_EXPOSURE_EV").ok().and_then(|value| value.parse::<f32>().ok())
++        .filter(|ev| *ev != 0.0 && (-2.0..=2.0).contains(ev))
++    {
++        extra.push(format!("camera_exposure_ev={ev}"));
++    }
+     if !reverse {
+         extra.push("tunnel_forward=true".into());
+     }
+@@ -312,14 +316,6 @@ pub fn list_cameras(adb: &Adb, serial: &str, server: &Path) -> Result<String, Se
+     Ok(out.stdout + &out.stderr)
+ }
+ 
+-fn kill_stale_servers(adb: &Adb, serial: &str) {
+-    // The bracket keeps pkill from matching the shell that runs this very command.
+-    if adb.shell(serial, "pkill -f 'com[.]genymobile[.]scrcpy[.]Server'").is_ok() {
+-        log::info!("killed a leftover scrcpy-server, waiting for the camera to be released");
+-        std::thread::sleep(STALE_SERVER_GRACE);
+-    }
+-}
+-
+ fn spawn_server(adb: &Adb, serial: &str, scid: u32, extra: &[String]) -> io::Result<Child> {
+     let mut cmd = adb.command(Some(serial));
+     cmd.args(["shell", &format!("CLASSPATH={DEVICE_SERVER_PATH}")])

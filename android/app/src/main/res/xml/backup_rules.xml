@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- SharedPreferences can leave a recovery copy after an interrupted write. -->
+    <exclude domain="sharedpref" path="pairing.xml" />
+    <exclude domain="sharedpref" path="pairing.xml.bak" />
+    <exclude domain="sharedpref" path="usb.xml" />
+    <exclude domain="sharedpref" path="usb.xml.bak" />
+</full-backup-content>

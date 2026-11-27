@@ -1,0 +1,345 @@
+diff --git a/src-tauri/src/platform.rs b/src-tauri/src/platform.rs
+index 3631902..d3778b1 100644
+--- a/src-tauri/src/platform.rs
++++ b/src-tauri/src/platform.rs
+@@ -6,7 +6,7 @@ use windows::Win32::System::Registry::{HKEY, HKEY_CLASSES_ROOT, HKEY_LOCAL_MACHI
+ use windows::core::{HSTRING, PCWSTR};
+ 
+ /// Must match `CLSID_DShowSoftcam` in vcam/src/softcam/softcam.cpp.
+-pub const VCAM_CLSID: &str = "{518D4949-2206-4A92-B74A-6CF1C7348605}";
++pub const VCAM_CLSID: &str = "{8AA4F694-432C-44AB-9383-88A0F819FF90}";
+ 
+ fn reg_string(root: HKEY, key: &str, value: Option<&str>) -> Option<String> {
+     let key = HSTRING::from(key);
+diff --git a/src-tauri/src/scrcpy/server.rs b/src-tauri/src/scrcpy/server.rs
+index f750d86..2dbdb37 100644
+--- a/src-tauri/src/scrcpy/server.rs
++++ b/src-tauri/src/scrcpy/server.rs
+@@ -26,7 +26,6 @@ const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+ const LIST_TIMEOUT: Duration = Duration::from_secs(30);
+ /// A server left over from a crashed session keeps the camera busy for a moment after it is
+ /// killed ("Too many other clients connecting"), see docs/stage0.md.
+-const STALE_SERVER_GRACE: Duration = Duration::from_secs(3);
+ const LOG_LINES_KEPT: usize = 20;
+ 
+ #[derive(Debug, thiserror::Error)]
+@@ -242,7 +241,8 @@ pub fn server_file() -> Result<PathBuf, ServerError> {
+ 
+ /// Pushes and starts the server, then connects the video and control sockets.
+ pub fn start(adb: &Adb, serial: &str, server: &Path, params: &CameraParams) -> Result<Session, ServerError> {
+-    kill_stale_servers(adb, serial);
++    // Each session closes its own sockets and adb child. Other scrcpy sessions
++    // may be supplying the independently running phone microphone.
+     adb.push(serial, server, DEVICE_SERVER_PATH)?;
+ 
+     let scid = random_scid();
+@@ -312,14 +312,6 @@ pub fn list_cameras(adb: &Adb, serial: &str, server: &Path) -> Result<String, Se
+     Ok(out.stdout + &out.stderr)
+ }
+ 
+-fn kill_stale_servers(adb: &Adb, serial: &str) {
+-    // The bracket keeps pkill from matching the shell that runs this very command.
+-    if adb.shell(serial, "pkill -f 'com[.]genymobile[.]scrcpy[.]Server'").is_ok() {
+-        log::info!("killed a leftover scrcpy-server, waiting for the camera to be released");
+-        std::thread::sleep(STALE_SERVER_GRACE);
+-    }
+-}
+-
+ fn spawn_server(adb: &Adb, serial: &str, scid: u32, extra: &[String]) -> io::Result<Child> {
+     let mut cmd = adb.command(Some(serial));
+     cmd.args(["shell", &format!("CLASSPATH={DEVICE_SERVER_PATH}")])
+diff --git a/vcam/src/softcam/softcam.cpp b/vcam/src/softcam/softcam.cpp
+index c7f5f98..6e44d3e 100644
+--- a/vcam/src/softcam/softcam.cpp
++++ b/vcam/src/softcam/softcam.cpp
+@@ -8,16 +8,16 @@
+ 
+ 
+ // Plugcam: own CLSID so it never collides with other Softcam-based cameras
+-// {518D4949-2206-4A92-B74A-6CF1C7348605}
++// {8AA4F694-432C-44AB-9383-88A0F819FF90}
+ DEFINE_GUID(CLSID_DShowSoftcam,
+-0x518d4949, 0x2206, 0x4a92, 0xb7, 0x4a, 0x6c, 0xf1, 0xc7, 0x34, 0x86, 0x05);
++0x8aa4f694, 0x432c, 0x44ab, 0x93, 0x83, 0x88, 0xa0, 0xf8, 0x19, 0xff, 0x90);
+ 
+ 
+ namespace {
+ 
+ // Setup data
+ 
+-const wchar_t FILTER_NAME[] = L"Plugcam Camera";
++const wchar_t FILTER_NAME[] = L"Moby On-Demand Camera";
+ const GUID &FILTER_CLASSID = CLSID_DShowSoftcam;
+ 
+ const AMOVIESETUP_MEDIATYPE s_pin_types[] =
+diff --git a/vcam/src/softcamcore/DShowSoftcam.cpp b/vcam/src/softcamcore/DShowSoftcam.cpp
+index 71b737a..46a8e45 100644
+--- a/vcam/src/softcamcore/DShowSoftcam.cpp
++++ b/vcam/src/softcamcore/DShowSoftcam.cpp
+@@ -164,12 +164,12 @@ CUnknown * Softcam::CreateInstance(
+ }
+ 
+ Softcam::Softcam(LPUNKNOWN lpunk, const GUID& clsid, HRESULT *phr) :
+-    CSource(NAME("Plugcam Camera"), lpunk, clsid),
+-    m_frame_buffer(FrameBuffer::open()),
+-    m_valid(m_frame_buffer ? true : false),
+-    m_width(m_frame_buffer.width()),
+-    m_height(m_frame_buffer.height()),
+-    m_framerate(m_frame_buffer.framerate())
++    CSource(NAME("Moby On-Demand Camera"), lpunk, clsid),
++    m_frame_buffer(FrameBuffer::idle()),
++    m_valid(true),
++    m_width(1280),
++    m_height(720),
++    m_framerate(30.0f)
+ {
+     // This code is okay though it may look strange as the return value is ignored.
+     // Calling the SoftcamStream constructor results in calling the CBaseOutputPin
+@@ -378,6 +378,7 @@ SoftcamStream::SoftcamStream(HRESULT *phr,
+ 
+ SoftcamStream::~SoftcamStream()
+ {
++    if (m_demand) UnmapViewOfFile(const_cast<LONG64*>(m_demand));
+     LOG("===== logging finished =====\n");
+     CLOSE_LOGFILE();
+ }
+@@ -407,6 +408,17 @@ STDMETHODIMP SoftcamStream::NonDelegatingQueryInterface(REFIID riid, __deref_out
+ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
+ {
+     CheckPointer(pms,E_POINTER);
++    if (!m_demand)
++    {
++        HANDLE demand = OpenFileMappingW(FILE_MAP_WRITE, FALSE, L"Moby On-Demand Camera/Demand");
++        if (demand)
++        {
++            m_demand = static_cast<LONG64*>(MapViewOfFile(demand, FILE_MAP_WRITE, 0, 0, sizeof(LONG64)));
++            CloseHandle(demand);
++        }
++    }
++    if (m_demand) InterlockedExchange64(m_demand, static_cast<LONG64>(GetTickCount64()));
++
+ 
+     BYTE *pData;
+     pms->GetPointer(&pData);
+@@ -415,48 +427,37 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
+     {
+         if (auto fb = getParent()->getFrameBuffer())
+         {
+-            bool active = fb->waitForNewFrame(m_frame_counter);
+-            fb->transferToDIB(pData, &m_frame_counter);
+-
+-            if (!active)
++            if (!m_haveFrameBuffer)
++            {
++                m_haveFrameBuffer = true;
++                m_frame_counter = fb->frameCounter();
++            }
++            if (fb->waitForNewFrame(m_frame_counter, 0.1f))
++            {
++                if (fb->frameCounter() > m_frame_counter)
++                    fb->transferToDIB(pData, &m_frame_counter);
++            }
++            else
+             {
+-                // The sender has deactivated this stream and stopped sending frames.
+-                // We release this stream and will wait a new stream to be available.
+                 getParent()->releaseFrameBuffer();
+-
+-                // Save the last image for a placeholder.
+-                const std::size_t size = calcDIBSize(m_width, m_height);
+-                if (!m_screenshot)
+-                {
+-                    m_screenshot.reset(new uint8_t[size]);
+-                }
+-                {
+-                    // Darken the image to indicate that the source is inactive.
+-                    for (std::size_t i = 0; i < size; i++)
+-                    {
+-                        pData[i] /= 4;
+-                    }
+-                }
+-                std::memcpy(m_screenshot.get(), pData, size);
++                m_haveFrameBuffer = false;
++                m_frame_counter = 0;
+             }
+         }
+         else
+         {
+             // Waiting for a new stream.
++            m_haveFrameBuffer = false;
+             m_frame_counter = 0;
+-            Timer::sleep(0.100f);
+-
+-            const std::size_t size = calcDIBSize(m_width, m_height);
+-            std::memcpy(pData, m_screenshot.get(), size);
++            Timer::sleep(0.033f);
+         }
+ 
+         CAutoLock lock(&m_critsec);
+         CRefTime start = m_sample_time;
+-        // Plugcam: a live source (framerate 0) delivers frames at the phone's pace, so
+-        // stamp each one with the real stream time. The fixed 60 fps step would make
+-        // timestamps drift behind the clock and let renderers pile up latency.
++        // The negotiated format stays stable between placeholder and phone frames.
++        // Timestamp both against the graph clock so startup delays do not accumulate.
+         CRefTime now;
+-        if (getParent()->framerate() <= 0.0f && SUCCEEDED(m_pFilter->StreamTime(now)))
++        if (SUCCEEDED(m_pFilter->StreamTime(now)))
+         {
+             start = now;
+         }
+@@ -469,6 +470,14 @@ HRESULT SoftcamStream::FillBuffer(IMediaSample *pms)
+     return NOERROR;
+ }
+ 
++HRESULT SoftcamStream::OnThreadDestroy()
++{
++    getParent()->releaseFrameBuffer();
++    m_haveFrameBuffer = false;
++    m_frame_counter = 0;
++    return S_OK;
++}
++
+ 
+ STDMETHODIMP SoftcamStream::Notify(IBaseFilter * pSender, Quality q)
+ {
+diff --git a/vcam/src/softcamcore/DShowSoftcam.h b/vcam/src/softcamcore/DShowSoftcam.h
+index fcecf93..e0e8ccf 100644
+--- a/vcam/src/softcamcore/DShowSoftcam.h
++++ b/vcam/src/softcamcore/DShowSoftcam.h
+@@ -67,6 +67,7 @@ class SoftcamStream : public CSourceStream, public IKsPropertySet, public IAMStr
+     HRESULT FillBuffer(IMediaSample *pms) override;
+     HRESULT GetMediaType(CMediaType *pMediaType) override;
+     HRESULT OnThreadCreate(void) override;
++    HRESULT OnThreadDestroy() override;
+ 
+     //  IKsPropertySet
+     HRESULT STDMETHODCALLTYPE Set(REFGUID guidPropSet, DWORD dwPropID,
+@@ -89,11 +90,12 @@ private:
+     const int   m_width;
+     const int   m_height;
+     uint64_t    m_frame_counter = 0;
+-    std::unique_ptr<uint8_t[]>  m_screenshot;
++    bool m_haveFrameBuffer = false;
++    volatile LONG64* m_demand = nullptr;
+ 
+     CCritSec m_critsec;
+     CRefTime m_sample_time;
+-    long m_interval_time_msec = 10;
++    long m_interval_time_msec = 33;
+ 
+     Softcam*        getParent();
+ };
+diff --git a/vcam/src/softcamcore/FrameBuffer.cpp b/vcam/src/softcamcore/FrameBuffer.cpp
+index 2885b14..894b92a 100644
+--- a/vcam/src/softcamcore/FrameBuffer.cpp
++++ b/vcam/src/softcamcore/FrameBuffer.cpp
+@@ -1,14 +1,16 @@
+ #include "FrameBuffer.h"
+ 
+ #include <windows.h>
++#include <cstring>
+ #include <mutex> // lock_guard
+ 
+ 
+ namespace softcam {
+ 
+ 
+-const char NamedMutexName[] = "Plugcam Camera/NamedMutex";
+-const char SharedMemoryName[] = "Plugcam Camera/SharedMemory";
++const char NamedMutexName[] = "Moby On-Demand Camera/NamedMutex";
++const char SharedMemoryName[] = "Moby On-Demand Camera/SharedMemory";
++const char SenderLeaseName[] = "Moby On-Demand Camera/SenderLease";
+ const uint8_t ProtocolVersion = 2;
+ 
+ 
+@@ -51,22 +53,35 @@ FrameBuffer FrameBuffer::create(
+         return fb;
+     }
+ 
++    fb.m_sender_lease = SharedMemory::create(SenderLeaseName, 1);
++    if (!fb.m_sender_lease) return fb;
++    std::lock_guard<NamedMutex> lock(fb.m_mutex);
+     auto shmem_size = calcMemorySize((uint16_t)width, (uint16_t)height);
+     fb.m_shmem = SharedMemory::create(SharedMemoryName, shmem_size);
++    bool fresh = static_cast<bool>(fb.m_shmem);
++    if (!fresh) fb.m_shmem = SharedMemory::open(SharedMemoryName);
+     if (fb.m_shmem)
+     {
+-        std::lock_guard<NamedMutex> lock(fb.m_mutex);
+-
+         auto frame = fb.header();
++        if (!fresh && (fb.m_shmem.size() < shmem_size || frame->m_width != width || frame->m_height != height
++            || frame->m_image_offset != sizeof(Header)))
++        {
++            fb.m_shmem = {};
++            return fb;
++        }
+         frame->m_image_offset = sizeof(Header);
+         frame->m_width = (uint16_t)width;
+         frame->m_height = (uint16_t)height;
+         frame->m_framerate = framerate;
+-        frame->m_is_active = 1;
+-        frame->m_connected_min_version = 0;
+         frame->m_watchdog_sender_heartbeat = 0;
+-        frame->m_watchdog_receiver_heartbeat = 0;
+-        frame->m_frame_counter = 0;
++        if (fresh)
++        {
++            frame->m_connected_min_version = 0;
++            frame->m_watchdog_receiver_heartbeat = 0;
++            frame->m_frame_counter = 0;
++        }
++        std::memset(frame->imageData(), 0, shmem_size - sizeof(Header));
++        frame->m_is_active = 1;
+ 
+         auto mutex = fb.m_mutex;
+         fb.m_sender_watchdog = Watchdog::createHeartbeat(
+@@ -88,6 +103,11 @@ FrameBuffer FrameBuffer::create(
+     return fb;
+ }
+ 
++FrameBuffer FrameBuffer::idle()
++{
++    return FrameBuffer(NamedMutexName);
++}
++
+ FrameBuffer FrameBuffer::open()
+ {
+     FrameBuffer fb(NamedMutexName);
+@@ -152,6 +172,7 @@ FrameBuffer::operator =(const FrameBuffer& fb)
+     m_sender_watchdog = {};
+     m_shmem = {};
+     m_shmem = fb.m_shmem;
++    m_sender_lease = fb.m_sender_lease;
+     m_sender_watchdog = fb.m_sender_watchdog;
+     m_receiver_watchdog = fb.m_receiver_watchdog;
+     return *this;
+@@ -284,6 +305,7 @@ void FrameBuffer::release()
+     m_receiver_watchdog.stop();
+     m_sender_watchdog.stop();
+     m_shmem = SharedMemory{};
++    m_sender_lease = SharedMemory{};
+ }
+ 
+ FrameBuffer::Header* FrameBuffer::header()
+diff --git a/vcam/src/softcamcore/FrameBuffer.h b/vcam/src/softcamcore/FrameBuffer.h
+index 850ec1b..528a4db 100644
+--- a/vcam/src/softcamcore/FrameBuffer.h
++++ b/vcam/src/softcamcore/FrameBuffer.h
+@@ -23,6 +23,7 @@ class FrameBuffer
+                         int             height,
+                         float           framerate = 0.0f);
+     static FrameBuffer open();
++    static FrameBuffer idle();
+ 
+     FrameBuffer& operator =(const FrameBuffer&);
+     explicit operator bool() const { return handle() != nullptr; }
+@@ -50,6 +51,7 @@ class FrameBuffer
+     struct Header;
+ 
+     mutable NamedMutex      m_mutex;
++    SharedMemory            m_sender_lease;
+     SharedMemory            m_shmem;
+     Watchdog                m_sender_watchdog;
+     Watchdog                m_receiver_watchdog;

@@ -1,0 +1,101 @@
+# .NET
+bin/
+obj/
+.vs/
+*.user
+
+# Android / Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.kotlin/
+*.iml
+
+# Local credentials and signing keys
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.key
+*.pem
+!/android/app/src/androidTest/assets/tls-test-cert.pem
+!/android/app/src/androidTest/assets/tls-test-key.pem
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Local agent settings and runtime data
+.config/
+.local/
+/config.json
+/agent/PhoneBox.Agent/config.json
+config.json.bak
+/.moby-spike/
+/artifacts/
+/Photo Frame/
+/photo-album/
+/apple-carplay-27-3840x2647-26680.jpeg
+/SOL-HANDOFF.md
+/MOBY.md
+
+# Build output
+dist/
+/out/
+*.apk
+*.aab
+*.bundle
+node_modules/
+__pycache__/
+.pytest_cache/
+
+# Local tooling
+.temp_files/
+.playwright-mcp/
+.idea/
+.vscode/
+extras/**/backup/
+*.log
+*.log.*
+
+# AI assistant settings, instructions, and working notes
+.agents/
+.aider*
+.antigravity/
+.augment/
+.claude/
+.cline/
+.codex/
+.continue/
+.cursor/
+.cursorrules
+.gemini/
+.kiro/
+.opencode/
+.roo/
+.windsurf/
+.windsurfrules
+.wrongstack/
+.mcp.json
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+/.coderabbit.yaml
+/.coderabbit.yml
+/.github/agents/
+/.github/instructions/
+/.github/prompts/
+/.github/copilot-instructions.md
+/docs/superpowers/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# UI tests (tools/ui-tests)
+.ui-site/
+ui-test-report/
+playwright-report/
+tools/ui-tests/test-results/
