@@ -15,6 +15,8 @@ test('shortcut and webhook controls fit the settings viewport at phone width', a
 
 async function editTheme(page) {
   await page.goto('/settings/#general');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   const theme = page.locator('[data-bind="display.theme"]');
   await expect(theme).toBeVisible();
   const draft = (await theme.inputValue()) === 'graphite' ? 'warm' : 'graphite';
@@ -120,6 +122,8 @@ test('pressing Save twice while a save runs sends one request and keeps the busy
 
 test('a section introduction is measured again after the language changes', async ({ page }) => {
   await page.goto('/settings/#pages');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   const lead = page.locator('#pages > .lead');
   await expect(lead).toHaveClass(/\blong\b/);
   // a short text marks it as not expandable; switching the language puts the full text back

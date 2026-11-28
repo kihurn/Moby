@@ -11,6 +11,8 @@ const DEMO_NAMES = [
   '🏠 Home', '🧭 Dashboard', '✳️ AI quotas', '🤖 Sessions', '📊 System', '⚙️ Processes', '🎛️ Shortcuts',
   '🎵 Music', '🎯 Status', '🌅 Ambient', '🌍 World', '✅ Daily', '💱 Markets', '📡 Feeds', '🍅 Focus',
   '🫁 Calm', '🕰️ Clock', '⚡ Automation', '🗓️ Planner', '🛏️ Nightstand', '🏖️ Weekend', '🎧 Deep work',
+  // the Moby pages: their tab shows the emoji as a drawn icon, so the text on screen is the title alone
+  'Moby Idle', 'Moby Shortcuts', 'Moby System', 'Moby Call',
   '🧭 CodexBar', '🛠️ DevOps', '🎛️ Audio deck', '🎛️ Streaming deck', '🎛️ Meeting deck',
   '🎛️ Development deck', '🎛️ Music deck', '🎛️ Computer controls',
   // shortcut presets shown in the sample deck, and the ids the deck sample uses

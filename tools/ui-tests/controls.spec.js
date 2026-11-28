@@ -397,6 +397,8 @@ test('Control Deck settings update on input without blur and Smart Stack canvas 
   await page.setViewportSize({ width: 1280, height: 860 });
   await page.goto('/settings/#general');
   await expect(page.locator('[data-bind="ping.host"]')).toBeVisible();
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
 
   await page.evaluate(() => {
     const cfgObj = JSON.parse(localStorage.getItem('pb-demo-config'));
@@ -408,6 +410,7 @@ test('Control Deck settings update on input without blur and Smart Stack canvas 
     localStorage.setItem('pb-demo-config', JSON.stringify(cfgObj));
   });
   await page.reload();
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await expect(page.locator('#save')).toBeDisabled();
 
   await page.locator('#controlSettings summary').filter({ hasText: 'Spotify connection' }).click();

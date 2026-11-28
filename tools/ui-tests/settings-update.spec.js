@@ -5,6 +5,8 @@ const { test, expect } = require('@playwright/test');
 async function open(page, status, installed = true) {
   await page.goto('/settings/#shortcuts');
   await expect(page.locator('#save')).toBeVisible();
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await page.evaluate(([st, installed]) => {
     const original = window.fetch;
     window.applied = 0;

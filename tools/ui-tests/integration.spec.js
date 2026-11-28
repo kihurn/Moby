@@ -347,6 +347,8 @@ test('multi option preserves saved unlisted quota provider IDs when toggling cho
 test('Apply JSON fills defaults for a partial config instead of breaking the editor', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 860 });
   await page.goto('/settings/#general');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   // move away from the defaults first, so the checks below prove Apply JSON put them back
   await page.locator('input[data-bind="night.brightness"]').fill('0.1');
   await expect(page.locator('#nbv')).toHaveText('10%');
@@ -369,6 +371,8 @@ test('Apply JSON fills defaults for a partial config instead of breaking the edi
 test('Apply JSON gives pasted widgets a valid grid position', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 860 });
   await page.goto('/settings/#advanced');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await page.locator('#json').fill('{"pages": [{"id": "p", "title": "P", "widgets": [{"id": "w1", "type": "clock"}]}]}');
   await page.locator('#applyJson').click();
   await expect(page.locator('#jsonErr')).toHaveText('');

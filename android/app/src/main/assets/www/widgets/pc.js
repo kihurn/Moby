@@ -1145,7 +1145,7 @@ W.agenda = {
 function onAirCapture(box, sign, sub, showIndicator) {
   const button = h('button', 'oa-toggle', sign, sub);
   button.type = 'button';
-  button.setAttribute('aria-label', 'Toggle call capture');
+  button.setAttribute('aria-label', tp('Toggle call capture'));
   sub.setAttribute('role', 'status');
   box.append(button);
   cancelDraggedClick(button);

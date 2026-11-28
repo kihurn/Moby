@@ -138,6 +138,8 @@ test('settings: a camera added in General can be chosen in the widget, and its a
   await show(page, { widget: {}, cameras: [] });
   await page.setViewportSize({ width: 1280, height: 1000 });
   await page.goto('/settings/#general');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await page.locator('#cameraAdd').click();
   const row = page.locator('#cameraList .cam-row').first();
   await row.locator('input').nth(0).fill('Front door');
@@ -149,6 +151,8 @@ test('settings: a camera added in General can be chosen in the widget, and its a
   expect(saved[0].id).toMatch(/^[a-z0-9]{12}$/);
   // the widget's camera option lists it by name
   await page.goto('/settings/#pages');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await page.locator('#canvas [title="Camera"]').click();
   const select = page.locator('#inspector select').first();
   await expect(select.locator('option', { hasText: 'Front door' })).toHaveCount(1);

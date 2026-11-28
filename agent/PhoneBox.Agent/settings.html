@@ -742,10 +742,10 @@ nav a.on::before { color: var(--accent); }
       </div>
 
       <div class="card">
-        <h3>Moby call capture</h3>
-        <div class="field"><label for="mobyCameraPath">Portable Plugcam executable</label><input id="mobyCameraPath" type="text" data-bind="mobyCameraPath" spellcheck="false"></div>
-        <div class="field"><label for="mobyCameraExposureEv">Camera exposure compensation (EV)</label><input id="mobyCameraExposureEv" type="number" min="-2" max="2" step="0.1" data-bind="mobyCameraExposureEv" data-type="num" aria-describedby="mobyCameraExposureHint"><small class="hint" id="mobyCameraExposureHint">0 uses normal auto-exposure. Positive values brighten and negative values darken. Requires the Moby exposure build of Plugcam and applies when camera capture starts.</small></div>
-        <p class="hint">Use a dedicated Plugcam folder. Set its bundled adb.exe as the ADB path and select the cable playback device under Advanced › JSON.</p>
+        <h3 data-i18n="s.moby.title">Moby call capture</h3>
+        <div class="field"><label for="mobyCameraPath" data-i18n="s.moby.cameraPath">Portable Plugcam executable</label><input id="mobyCameraPath" type="text" data-bind="mobyCameraPath" spellcheck="false"></div>
+        <div class="field"><label for="mobyCameraExposureEv" data-i18n="s.moby.exposure">Camera exposure compensation (EV)</label><input id="mobyCameraExposureEv" type="number" min="-2" max="2" step="0.1" data-bind="mobyCameraExposureEv" data-type="num" aria-describedby="mobyCameraExposureHint"><small class="hint" id="mobyCameraExposureHint" data-i18n="s.moby.exposureHint">0 uses normal auto-exposure. Positive values brighten and negative values darken. Requires the Moby exposure build of Plugcam and applies when camera capture starts.</small></div>
+        <p class="hint" data-i18n="s.moby.folderHint">Use a dedicated Plugcam folder. Set its bundled adb.exe as the ADB path and select the cable playback device under Advanced › JSON.</p>
       </div>
 
       <div class="card">
@@ -766,7 +766,7 @@ nav a.on::before { color: var(--accent); }
           <div class="field" style="margin:0"><label for="displayLangSel" data-i18n="lang.label">Language</label>
             <select data-bind="display.language" id="displayLangSel"></select></div>
           <div class="field" style="margin:0"><label for="setting-display-theme" data-i18n="s.display.theme">Theme</label>
-            <select id="setting-display-theme" data-bind="display.theme"><option value="default" data-i18n="s.display.theme.default">Default</option><option value="amoled" data-i18n="s.display.theme.amoled">AMOLED black</option><option value="midnight" data-i18n="s.display.theme.midnight">Midnight blue</option><option value="warm" data-i18n="s.display.theme.warm">Warm</option><option value="graphite" data-i18n="s.display.theme.graphite">Graphite</option><option value="liquid-glass">Liquid Glass</option></select></div>
+            <select id="setting-display-theme" data-bind="display.theme"><option value="default" data-i18n="s.display.theme.default">Default</option><option value="amoled" data-i18n="s.display.theme.amoled">AMOLED black</option><option value="midnight" data-i18n="s.display.theme.midnight">Midnight blue</option><option value="warm" data-i18n="s.display.theme.warm">Warm</option><option value="graphite" data-i18n="s.display.theme.graphite">Graphite</option><option value="liquid-glass" data-i18n="s.display.theme.liquidGlass">Liquid Glass</option></select></div>
           <div class="field" style="margin:0"><label for="setting-display-accent" data-i18n="s.display.accent">Accent colour</label><input id="setting-display-accent" type="color" data-bind="display.accent" style="width:56px;height:36px;padding:2px"></div>
           <label class="check" style="margin-bottom:8px"><input type="checkbox" data-bind="display.artTint"> <span data-i18n="s.display.artTint">Tint the background with the album art</span></label>
         </div>
@@ -809,13 +809,13 @@ nav a.on::before { color: var(--accent); }
       </div>
 
       <div class="card">
-        <h3>Desk presence</h3>
+        <h3 data-i18n="s.dp.title">Desk presence</h3>
         <div class="grid2">
-          <div class="field"><label for="deskPresenceMode">Mode</label><select id="deskPresenceMode" data-bind="deskPresence.mode"><option value="disabled">Disabled</option><option value="away">Away only</option><option value="return">Away + return</option></select></div>
-          <div class="field"><label for="deskPresenceDelay">Absent before dimming (seconds)</label><input id="deskPresenceDelay" type="number" min="10" max="3600" data-bind="deskPresence.absenceSeconds" data-type="int"></div>
-          <div class="field"><label for="deskPresenceStandbyDelay">Dimmed before monitor standby (seconds)</label><input id="deskPresenceStandbyDelay" type="number" min="5" max="3600" data-bind="deskPresence.standbySeconds" data-type="int"></div>
+          <div class="field"><label for="deskPresenceMode" data-i18n="s.dp.mode">Mode</label><select id="deskPresenceMode" data-bind="deskPresence.mode"><option value="disabled" data-i18n="s.dp.disabled">Disabled</option><option value="away" data-i18n="s.dp.away">Away only</option><option value="return" data-i18n="s.dp.return">Away + return</option></select></div>
+          <div class="field"><label for="deskPresenceDelay" data-i18n="s.dp.absenceDelay">Absent before dimming (seconds)</label><input id="deskPresenceDelay" type="number" min="10" max="3600" data-bind="deskPresence.absenceSeconds" data-type="int"></div>
+          <div class="field"><label for="deskPresenceStandbyDelay" data-i18n="s.dp.standbyDelay">Dimmed before monitor standby (seconds)</label><input id="deskPresenceStandbyDelay" type="number" min="5" max="3600" data-bind="deskPresence.standbySeconds" data-type="int"></div>
         </div>
-        <p class="hint">Moby dims the phone and supported monitors after you leave. After the second delay, the monitors enter standby and the phone stays dim. Desk presence takes priority over the phone’s room-light settings. Input wakes both displays. Away + return also wakes them when you come back into view in good light.</p>
+        <p class="hint" data-i18n="s.dp.hint">Moby dims the phone and supported monitors after you leave. After the second delay, the monitors enter standby and the phone stays dim. Desk presence takes priority over the phone’s room-light settings. Input wakes both displays. Away + return also wakes them when you come back into view in good light.</p>
       </div>
 
       <div class="card">
@@ -2146,11 +2146,11 @@ function haItemsEditor(w, o, set) {
       const text = (key, ph, flex, max, extra = {}) => h('input', { type: 'text', value: r[key] ?? '', placeholder: ph, maxlength: max, spellcheck: 'false', style: { flex, minWidth: '0' }, oninput: (e) => { r[key] = e.target.value; save(); }, ...extra });
       const check = (key, label, on) => h('label', { class: 'check' }, h('input', { type: 'checkbox', checked: on, onchange: (e) => { r[key] = e.target.checked; save(); } }), label);
       const id = text('id', 'light.desk', '1 1 200px', MAX_ID); id.setAttribute('list', list.id);
-      const icon = text('icon', t('s.ha.iconPh'), '0 0 64px', MAX_ICON);
+      const iconInput = text('icon', t('s.ha.iconPh'), '0 0 64px', MAX_ICON);
       const pick = (em) => { r.icon = em; save(); picking = -1; render(); };
       return h('div', { class: 'ha-row' },
         h('div', { class: 'row', style: { gap: '6px', flexWrap: 'wrap' } }, id, text('name', t('s.ha.namePh'), '1 1 200px', MAX_NAME)),
-        h('div', { class: 'row', style: { gap: '6px', marginTop: '6px', flexWrap: 'wrap' } }, icon,
+        h('div', { class: 'row', style: { gap: '6px', marginTop: '6px', flexWrap: 'wrap' } }, iconInput,
           h('button', { class: 'btn sm', title: t('s.ha.iconTitle'), onclick: () => { picking = picking === i ? -1 : i; render(); } }, picking === i ? t('s.ha.close') : t('s.ha.pickIcon')),
           h('button', { class: 'btn sm', title: t('s.ha.up'), disabled: i === 0, onclick: () => { [rows[i - 1], rows[i]] = [rows[i], rows[i - 1]]; save(); render(); } }, '▲'),
           h('button', { class: 'btn sm', title: t('s.ha.down'), disabled: i === rows.length - 1, onclick: () => { [rows[i + 1], rows[i]] = [rows[i], rows[i + 1]]; save(); render(); } }, '▼'),

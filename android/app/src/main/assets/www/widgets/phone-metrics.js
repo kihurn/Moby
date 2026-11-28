@@ -1,12 +1,12 @@
-import { D, fmtMem, h } from '../main.js';
+import { D, fmtMem, h, tp } from '../main.js';
 import { W } from '../registry.js';
 
 W.phonemetrics = {
   needs: ['phoneMetrics'],
   create(box) {
     const rows = h('dl', 'moby-sensor-list');
-    box.append(h('div', 'w-title', 'Phone metrics'), rows);
-    const fields = ['CPU load', 'RAM used', 'CPU temp', 'Battery', 'Battery temp'].map(label => {
+    box.append(h('div', 'w-title', tp('Phone metrics')), rows);
+    const fields = [tp('CPU load'), tp('RAM used'), tp('CPU temp'), tp('Battery'), tp('Battery temp')].map(label => {
       const value = h('dd', '', '—');
       rows.append(h('dt', '', label), value);
       return value;
@@ -28,7 +28,7 @@ W.phonemetrics = {
         if (fields[i].textContent !== readings[i]) fields[i].textContent = readings[i];
       }
       message.hidden = !missing;
-      message.textContent = data === undefined ? 'Reading phone metrics…' : 'Phone metrics unavailable · check USB';
+      message.textContent = data === undefined ? tp('Reading phone metrics…') : tp('Phone metrics unavailable · check USB');
     } };
   },
 };

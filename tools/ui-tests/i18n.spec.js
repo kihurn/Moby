@@ -261,6 +261,8 @@ test('a widget title typed in Turkish uses Turkish capitals', async ({ page }) =
 
 test('the saved Japanese preference reaches the settings and the phone panel', async ({ page }) => {
   await page.goto('/settings/#general');
+  // Save is disabled in the page's HTML already; the version appears once the settings are loaded and the picker works
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await expect(page.locator('#save')).toBeDisabled();
   await page.locator('#langSel').selectOption('ja');
   await expect(page.locator('#save')).toHaveText('保存');
@@ -326,6 +328,8 @@ test('Arabic reads right to left without moving saved widget coordinates', async
 test('Arabic settings wraps a long adb path and localizes the appearance defaults', async ({ page }) => {
   await page.setViewportSize({ width: 1120, height: 780 });
   await page.goto('/settings/#general');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
   await page.locator('#langSel').selectOption('ar');
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   await expect(page.locator('#appearanceSettings output').first()).toHaveText('تلقائي');
@@ -536,7 +540,7 @@ test('the Arabic template dialog inserts the saved page title literally', async 
 test('the shortcut delete button is localized in Arabic without changing its English label', async ({ page }) => {
   await page.goto('/settings/#shortcuts');
   await page.locator('#deck .key:not(.add)').first().click();
-  const deleteButton = page.locator('#editor button.danger');
+  const deleteButton = page.locator('#editor > .row button.danger');
   await expect(deleteButton).toHaveAccessibleName('Delete');
   const shortcut = page.locator('#deck .key:not(.add) .kl').first();
   const label = await shortcut.textContent();

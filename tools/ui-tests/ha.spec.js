@@ -66,7 +66,7 @@ test('the settings editor lists, edits, reorders and removes entities', async ({
   await rows.nth(1).getByRole('button', { name: '▲' }).click();
   await page.getByRole('button', { name: '＋ Add entity' }).click();
   await page.locator('.ha-row').nth(2).locator('input[placeholder="light.desk"]').fill('switch.coffee');
-  await page.locator('.ha-row').nth(0).getByRole('button', { name: '✕' }).click();
+  await page.locator('.ha-row').nth(0).getByRole('button', { name: 'Remove', exact: true }).click();
   await expect(page.locator('.ha-row')).toHaveCount(2);
   await page.locator('#save').click();
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('pb-demo-config')).pages[0].widgets[0].options.items);
@@ -78,8 +78,8 @@ test('removing every row of an old widget does not bring the entity text back', 
   await page.setViewportSize({ width: 1280, height: 860 });
   await open(page, '/settings/#pages', { control: true, entities: 'light.desk, sensor.office_temperature' });
   await page.locator('#canvas .wb').first().click();
-  await page.locator('.ha-row').nth(0).getByRole('button', { name: '✕' }).click();
-  await page.locator('.ha-row').nth(0).getByRole('button', { name: '✕' }).click();
+  await page.locator('.ha-row').nth(0).getByRole('button', { name: 'Remove', exact: true }).click();
+  await page.locator('.ha-row').nth(0).getByRole('button', { name: 'Remove', exact: true }).click();
   await expect(page.locator('.ha-row')).toHaveCount(0);
   await page.locator('#save').click();
   const o = await page.evaluate(() => JSON.parse(localStorage.getItem('pb-demo-config')).pages[0].widgets[0].options);

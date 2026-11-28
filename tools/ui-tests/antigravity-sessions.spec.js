@@ -10,6 +10,8 @@ async function seed(page, cfg) {
   await page.goto('/panel/style.css');
   await page.evaluate((c) => localStorage.setItem('pb-demo-config', JSON.stringify(c)), cfg);
   await page.goto('/settings/#general');
+  // the version appears once the settings are loaded; an action before that is ignored or overwritten
+  await expect(page.locator('#ver')).not.toBeEmpty();
 }
 
 test('Antigravity session switches save and survive reload', async ({ page }) => {
